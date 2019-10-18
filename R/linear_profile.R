@@ -1,23 +1,17 @@
-## cgt_profile
+## linear_profile
 ## Jamie Spaulding
 
-#' Criminal Geographic Targeting Model for Geographic Profiling (Rossmo Formula)
-#' @description An implementation of the criminal geographic targeting model
-#'      for serial crime analysis developed by DK Rossmo. This function
-#'      applies Rossmo's distance decay formula to a series of suspected crime
-#'      incidents for geographic profiling and prediction of perpetrator home
-#'      base. The equation for Rossmo's formula is:
-#'     \deqn{p_{i,j} = \sum_{n=1}^{n} \frac{\phi_{i,j}}{(\mid X_{i} - x_{n} \mid + \mid Y_{i} - y_{n} \mid) ^ f} + \frac{(1 - \phi_{i,j})(B ^ {g - f})}{(2B - \mid X_{i} - x_{n} \mid - \mid Y_{i} - y_{n} \mid) ^ g}}
+#' CrimeStat Linear Model for Geographic Profiling
+#' @description An implementation of the linear decay model for serial crime
+#'     analysis within CrimeStat. This model assumes that the likelihood of
+#'     the serial perpetrator's home base decreases in a linear fashion as the
+#'     distance increases from the crime incidents. The form of the linear
+#'     equation is:
+#'     \deqn{a + bd_{ij}}
 #' @param lat a vector of latitudes for the crime incident series
 #' @param lon a vector of latitudes for the crime incident series
-#' @param buffer the radius for the buffer zone assumed by the distance decay
-#'     model.
-#' @param f decay formula coefficient which changes the steepness of the decay
-#'     curve after the buffer radius. If \code{NULL}, the default value for *f*
-#'     is 1.2 as recommended by Rossmo (1995)
-#' @param g decay formula coefficient which changes the steepness of the decay
-#'     curve before the buffer radius. If \code{NULL}, the default value for *g*
-#'     is 1.2 as recommended by Rossmo (1995)
+#' @param a the slope coefficient which defines the function decrease in distance
+#' @param b a constant for the distance decay function
 #' @return A data frame of points depicting a spatial grid of the hunting area
 #'     for the given incident locations. Also given are the resultant summed
 #'     values (score) for each map point. A higher resultant score indicates
@@ -28,7 +22,7 @@
 #' \donttest{
 #' #Using provided dataset for the Boston Strangler Incidents:
 #' desalvo <- data.frame(rgeoprofile:::boston_strangler)
-#' test <- cgt_profile(data$lat, data$lon)
+#' test <- linear_profile(data$lat, data$lon)
 #' g_map = sp::SpatialPixelsDataFrame(points = test[c("lons", "lats")], data = test)
 #' g_map <- raster::raster(g_map)
 #' # Assign a Coordinate Reference System for the Raster
@@ -51,32 +45,12 @@
 #' @importFrom geosphere distHaversine
 #' @importFrom RANN.L1 nn2
 #' @export
-cgt_profile <- function(lat, lon, buffer = NULL, f = NULL, g = NULL){
+linear_profile <- function(lat, lon, a = NULL, b = NULL){
   # Set Defaults -----
-  if (is.null(buffer)) {
-    # Calculate Incident Buffer Zone -----
-    dat_nn <- cbind(lat,lon) # Extract only lat and lon columns
-    nn_list <- RANN.L1::nn2(dat_nn, dat_nn, k=2) # Find nearest neighbors using Manhattan distance
-    nn <- nn_list$nn.idx # Extract NN pairs
-
-    # Calculate Manhattan Distances Between NN Pairs -----
-    nn_md <- NULL
-    jj <- 1
-    for(i in 1:nrow(nn)){
-      incid1 <- dat_nn[nn[i,1],]
-      incid2 <- dat_nn[nn[i,2],]
-      dx <- geosphere::distHaversine(p1 = c(incid1[2], incid1[1]), p2 = c(incid2[2], incid1[1]), r = 3958) # hold y (lat) constant
-      dy <- geosphere::distHaversine(p1 = c(incid1[2], incid1[1]), p2 = c(incid1[2], incid2[1]), r = 3958) # hold x (lon) constant
-      nn_md[jj] <- dx + dy
-      jj <- jj+1
-    }
-    buffer <- (mean(nn_md)) / 2} #default: 1/2 Mean NN Manhattan Distance
-  c <- length(lat)
-  if (is.null(f)) {f <- 1.9} #default: Rossmo (1995)
-  if (is.null(g)) {g <- 1.9} #default: Rossmo (1995)
+  if (is.null(a)) {a <- 1.9} #default: Levine (2013)
+  if (is.null(b)) {b <- -0.06} #default: Levine (2013)
 
   # Computation of Map Boundaries/ Hunting Area -----
-  # Rossmo, D. Kim. Geographic profiling. CRC press, 1999. pg 199
   lat_max <- max(lat) + ((max(lat) - min(lat)) / (2 * (length(lat) - 1)))
   lat_min <- min(lat) - ((max(lat) - min(lat)) / (2 * (length(lat) - 1)))
   lon_max <- max(lon) + ((max(lon) - min(lon)) / (2 * (length(lon) - 1)))
@@ -94,9 +68,8 @@ cgt_profile <- function(lat, lon, buffer = NULL, f = NULL, g = NULL){
   run_seq <- expand.grid(lats,lons)
   names(run_seq) <- c("lats", "lons")
 
-  # CGT Distance Decay Function -----
+  # Linear Distance Decay Function -----
   jj <- 1
-  phi <- NULL
   output <- data.frame()
   # PROGRESS BAR FOR LOOP
   pb = txtProgressBar(min = 0, max = length(lat)*40000, style = 3)
@@ -110,17 +83,15 @@ cgt_profile <- function(lat, lon, buffer = NULL, f = NULL, g = NULL){
       yn <- lat[i]
       xi <- run_seq$lons[j]
       yi <- run_seq$lats[j]
-      dx <- geosphere::distHaversine(p1 = c(xn, yi), p2 = c(xi, yi), r = 3958) #hold y (lat) constant
-      dy <- geosphere::distHaversine(p1 = c(xi, yn), p2 = c(xi, yi), r = 3958) #hold y (lat) constant
-      if(dx + dy > 1){phi <- 1} else {phi <- 0}
-      output[jj,i] <- (phi / ((dx + dy) ^ f)) + (((1 - phi) * (buffer ^ (g - f))) / (((2 * buffer) - (dx - dy)) ^ g)) #Rossmo Formula
+      dx <- geosphere::distHaversine(p1 = c(xn, yn), p2 = c(xi, yi), r = 3958)
+      linear_output[jj,i] <- A + (B * d) #Linear Formula (Levine (2013): Eqn. 13.14)
       jj <- jj + 1
     }
     jj <- 1
   }
 
   ## Summation of Values for Each Grid Point
-  sums <- rowSums(output, na.rm = TRUE)
+  sums <- rowSums(linear_output, na.rm = TRUE)
   dat <- cbind(sums, run_seq)
   return(dat)
 }
