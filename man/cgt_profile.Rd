@@ -33,8 +33,7 @@ An implementation of the criminal geographic targeting model
      for serial crime analysis developed by DK Rossmo. This function
      applies Rossmo's distance decay formula to a series of suspected crime
      incidents for geographic profiling and prediction of perpetrator home
-     base. The equation for Rossmo's formula is:
-    \deqn{p_{i,j} = \sum_{n=1}^{n} \frac{\phi_{i,j}}{(\mid X_{i} - x_{n} \mid + \mid Y_{i} - y_{n} \mid) ^ f} + \frac{(1 - \phi_{i,j})(B ^ {g - f})}{(2B - \mid X_{i} - x_{n} \mid - \mid Y_{i} - y_{n} \mid) ^ g}}
+     base.
 }
 \examples{
 \donttest{

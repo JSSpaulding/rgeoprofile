@@ -26,8 +26,7 @@ An implementation of the linear decay model for serial crime
     analysis within CrimeStat. This model assumes that the likelihood of
     the serial perpetrator's home base decreases in a linear fashion as the
     distance increases from the crime incidents. The form of the linear
-    equation is:
-    \deqn{a + bd_{ij}}
+    equation is \eqn{a + bd}
 }
 \examples{
 \donttest{

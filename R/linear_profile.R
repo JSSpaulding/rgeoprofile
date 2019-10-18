@@ -6,8 +6,7 @@
 #'     analysis within CrimeStat. This model assumes that the likelihood of
 #'     the serial perpetrator's home base decreases in a linear fashion as the
 #'     distance increases from the crime incidents. The form of the linear
-#'     equation is:
-#'     \deqn{a + bd_{ij}}
+#'     equation is \eqn{a + bd}
 #' @param lat a vector of latitudes for the crime incident series
 #' @param lon a vector of latitudes for the crime incident series
 #' @param a the slope coefficient which defines the function decrease in distance
