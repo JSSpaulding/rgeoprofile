@@ -2,5 +2,9 @@
 
 export(cgt_profile)
 export(linear_profile)
+export(lognorm_profile)
+export(neg_exp_profile)
+export(norm_profile)
+export(trun_neg_exp_profile)
 importFrom(RANN.L1,nn2)
 importFrom(geosphere,distHaversine)

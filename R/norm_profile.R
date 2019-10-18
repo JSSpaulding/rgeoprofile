@@ -1,17 +1,21 @@
-## linear_profile
+## norm_profile
 ## Jamie Spaulding
 
-#' CrimeStat Linear Model for Geographic Profiling
-#' @description An implementation of the linear decay model for serial crime
-#'     analysis within CrimeStat. This model assumes that the likelihood of
-#'     the serial perpetrator's home base decreases in a linear fashion as the
-#'     distance increases from the crime incidents.
+#' CrimeStat Normal Model for Geographic Profiling
+#' @description An implementation of the normal decay model for serial crime
+#'     analysis within CrimeStat. This model assumes that there is a peak
+#'     likelihood of the serial perpetrator's home base at some optimal
+#'     distance from the crime incidents. The function rises in likelihood to that
+#'     distance and then declines at an equal rate (both prior to and after the
+#'     peak likelhihood) giving the symetrical normal distribution.
 #' @param lat a vector of latitudes for the crime incident series
 #' @param lon a vector of latitudes for the crime incident series
-#' @param a the slope coefficient which defines the function decrease in distance.
-#'     If \code{NULL}, the default value for 'a' is 1.9 (Levine 2013)
-#' @param b a constant for the distance decay function
-#'     If \code{NULL}, the default value for 'b' is -0.06 (Levine 2013)
+#' @param a coefficient for the normal decay function. If \code{NULL}, the default
+#'     value for 'a' is 29.5 (Levine 2013)
+#' @param d_mean mean distance. If \code{NULL}, the default value for 'd_mean' is
+#'     4.2 (Levine 2013)
+#' @param sd standard deviation of the distances. If \code{NULL}, the default
+#'     value for 'sd' is 4.6 (Levine 2013)
 #' @return A data frame of points depicting a spatial grid of the hunting area
 #'     for the given incident locations. Also given are the resultant summed
 #'     values (score) for each map point. A higher resultant score indicates
@@ -22,7 +26,7 @@
 #' \donttest{
 #' #Using provided dataset for the Boston Strangler Incidents:
 #' desalvo <- data.frame(rgeoprofile:::boston_strangler)
-#' test <- linear_profile(data$lat, data$lon)
+#' test <- norm_profile(data$lat, data$lon)
 #' g_map = sp::SpatialPixelsDataFrame(points = test[c("lons", "lats")], data = test)
 #' g_map <- raster::raster(g_map)
 #' # Assign a Coordinate Reference System for the Raster
@@ -45,10 +49,11 @@
 #' @importFrom geosphere distHaversine
 #' @importFrom RANN.L1 nn2
 #' @export
-linear_profile <- function(lat, lon, a = NULL, b = NULL){
+norm_profile <- function(lat, lon, a = NULL, d_mean = NULL, sd = NULL){
   # Set Defaults -----
-  if (is.null(a)) {a <- 1.9} #default: Levine (2013)
-  if (is.null(b)) {b <- -0.06} #default: Levine (2013)
+  if (is.null(a)) {a <- 29.5} #default: Levine (2013)
+  if (is.null(d_mean)) {d_mean <- 4.2} #default: Levine (2013)
+  if (is.null(sd)) {sd <- 4.6} #default: Levine (2013)
 
   # Computation of Map Boundaries/ Hunting Area -----
   lat_max <- max(lat) + ((max(lat) - min(lat)) / (2 * (length(lat) - 1)))
@@ -68,7 +73,7 @@ linear_profile <- function(lat, lon, a = NULL, b = NULL){
   run_seq <- expand.grid(lats,lons)
   names(run_seq) <- c("lats", "lons")
 
-  # Linear Distance Decay Function -----
+  # Normal Distance Decay Function -----
   jj <- 1
   output <- data.frame()
   # PROGRESS BAR FOR LOOP
@@ -84,7 +89,8 @@ linear_profile <- function(lat, lon, a = NULL, b = NULL){
       xi <- run_seq$lons[j]
       yi <- run_seq$lats[j]
       d <- geosphere::distHaversine(p1 = c(xn, yn), p2 = c(xi, yi), r = 3958)
-      output[jj,i] <- a + (b * d) #Linear Formula (Levine (2013): Eqn. 13.14)
+      z <- (d - d_mean) / sd
+      output[jj,i] <- a * (1 / (sd * (sqrt(2 * pi)))) * exp(-0.5 * (z ^ 2)) #Levine (2013) Eqn: 13.17)
       jj <- jj + 1
     }
     jj <- 1

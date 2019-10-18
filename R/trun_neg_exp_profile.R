@@ -1,17 +1,19 @@
-## linear_profile
+## trun_neg_exp_profile
 ## Jamie Spaulding
 
-#' CrimeStat Linear Model for Geographic Profiling
-#' @description An implementation of the linear decay model for serial crime
-#'     analysis within CrimeStat. This model assumes that the likelihood of
-#'     the serial perpetrator's home base decreases in a linear fashion as the
-#'     distance increases from the crime incidents.
+#' CrimeStat Truncated Negative Exponential Model for Geographic Profiling
+#' @description An implementation of the truncated negative exponential decay
+#'     model for serial crime analysis within CrimeStat. This is a joint function
+#'     composed of both the linear and the negative exponential. For distances
+#'     proximal to the incidents, a positive linear function is defined from zero
+#'     likelihood at distance zero to a location of peak likelihood. At the peak
+#'     likelihood the function takes the form of a negative exponential, rapidly
+#'     declining as distance increases.
 #' @param lat a vector of latitudes for the crime incident series
 #' @param lon a vector of latitudes for the crime incident series
-#' @param a the slope coefficient which defines the function decrease in distance.
-#'     If \code{NULL}, the default value for 'a' is 1.9 (Levine 2013)
-#' @param b a constant for the distance decay function
-#'     If \code{NULL}, the default value for 'b' is -0.06 (Levine 2013)
+#' @param dp radial distance for the peak likelihood (cutoff distance)
+#' @param peak_lh peak likelihood for the distance decay function
+#' @param c exponential constant for the negative exponential decay function
 #' @return A data frame of points depicting a spatial grid of the hunting area
 #'     for the given incident locations. Also given are the resultant summed
 #'     values (score) for each map point. A higher resultant score indicates
@@ -22,7 +24,7 @@
 #' \donttest{
 #' #Using provided dataset for the Boston Strangler Incidents:
 #' desalvo <- data.frame(rgeoprofile:::boston_strangler)
-#' test <- linear_profile(data$lat, data$lon)
+#' test <- trun_neg_exp_profile(data$lat, data$lon)
 #' g_map = sp::SpatialPixelsDataFrame(points = test[c("lons", "lats")], data = test)
 #' g_map <- raster::raster(g_map)
 #' # Assign a Coordinate Reference System for the Raster
@@ -45,10 +47,12 @@
 #' @importFrom geosphere distHaversine
 #' @importFrom RANN.L1 nn2
 #' @export
-linear_profile <- function(lat, lon, a = NULL, b = NULL){
+trun_neg_exp_profile <- function(lat, lon, a = NULL, b = NULL){
   # Set Defaults -----
-  if (is.null(a)) {a <- 1.9} #default: Levine (2013)
-  if (is.null(b)) {b <- -0.06} #default: Levine (2013)
+  if (is.null(dp)) {dp <- 0.4} #default: Levine (2013)
+  if (is.null(peak_lh)) {peak_lh <- 13.8} #default: Levine (2013)
+  if (is.null(c)) {c <- -0.06} #default: Levine (2013)
+  B <- (peak_lh / dp) #slope of linear function (origin -> cutoff)
 
   # Computation of Map Boundaries/ Hunting Area -----
   lat_max <- max(lat) + ((max(lat) - min(lat)) / (2 * (length(lat) - 1)))
@@ -84,7 +88,9 @@ linear_profile <- function(lat, lon, a = NULL, b = NULL){
       xi <- run_seq$lons[j]
       yi <- run_seq$lats[j]
       d <- geosphere::distHaversine(p1 = c(xn, yn), p2 = c(xi, yi), r = 3958)
-      output[jj,i] <- a + (b * d) #Linear Formula (Levine (2013): Eqn. 13.14)
+      if(d <= dp){out <- (B * d)}
+      if(d > dp){out <- (peak_lh * exp(c * (d - dp)))}
+      output[jj,i] <- out
       jj <- jj + 1
     }
     jj <- 1
