@@ -2,42 +2,53 @@
 ## Jamie Spaulding
 
 #' Criminal Geographic Targeting Model for Geographic Profiling (Rossmo Formula)
-#' @description XXXXX
-#' @param lat XXXX
-#' @param lon XXXX
-#' @param b XXXX
-#' @param f XXXX
-#' @param g XXXX
-#' @return XXXX
+#' @description An implementation of the criminal geographic targeting model
+#'      model for serial crime analysis developed by DK Rossmo. This function
+#'      applies Rossmo's distance decay formula to a series of suspected crime
+#'      incidents for geographic profiling and prediction of perpetrator home
+#'      base.
+#' @param lat a vector of latitudes for the crime incident series
+#' @param lon a vector of latitudes for the crime incident series
+#' @param buffer the radius for the buffer zone assumed by the distance decay
+#'     model.
+#' @param f decay formula coefficient which changes the steepness of the decay
+#'     curve after the buffer radius. If \code{NULL}, the default value for *f*
+#'     is 1.2 as recommended by Rossmo (1995)
+#' @param g decay formula coefficient which changes the steepness of the decay
+#'     curve before the buffer radius. If \code{NULL}, the default value for *g*
+#'     is 1.2 as recommended by Rossmo (1995)
+#' @return A data frame of points depicting a spatial grid of the hunting area
+#'     for the given incident locations. Also given are the resultant summed
+#'     values (score) for each map point. A higher resultant score indicates
+#'     a greater the probability that point contains the offender's anchor point.
 #' @author Jamie Spaulding, Keith Morris
 #' @keywords spatial methods
 #' @examples
 #' \donttest{
-#' #Using provided dataset from Chicago Data Portal:
-#' crimes <- data.frame(rcrimeanalysis:::crimes)
-#' nr_data <- head(crimes,n=5000) #truncate dataset for near repeat analysis
-#' library("rgdal")
-#' out <- near_repeat_analysis(data=nr_data,tz="America/Chicago",epsg="32616")
-#' path <- paste0(getwd(),"/netout") #path for iGraph networks out
-#' name <- 1
-#' # Save Image of Each igraph Network to Netpath Directory
-#' library(igraph)
-#' for(i in out){
-#'     png(file = paste(path, "/series", name, ".png",sep = ""))
-#'     plot(i, layout=layout_with_lgl, edge.color="orange",
-#'     vertex.color="orange", vertex.frame.color="#ffffff",
-#'     vertex.label.color="black")
-#'     dev.off()
-#'     name <- name+1
-#' }}
-#'
-#' @importFrom sp SpatialPoints
+#' #Using provided dataset for the Boston Strangler Incidents:
+#' desalvo <- data.frame(rgeoprofile:::boston_strangler)
+#' test <- cgt_profile(data$lat, data$lon)
+#' g_map = sp::SpatialPixelsDataFrame(points = test[c("lons", "lats")], data = test)
+#' g_map <- raster::raster(g_map)
+#' # Assign a Coordinate Reference System for the Raster
+#' raster::crs(g_map) <- sp::CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+#' # Define a Parula Color Pallete for Resultant Jeopardy Surface
+#' library(leaflet) #for mapping the geographic profile
+#' pal <- colorNumeric(pals::parula(200), raster::values(g_map),
+#'     na.color = "transparent")
+#' leaflet() %>%
+#'     addTiles() %>%
+#'     addProviderTiles('Esri.WorldTopoMap', group = 'Topo') %>%
+#'     addAwesomeMarkers(lng = -71.07357, lat = 42.41322, icon =
+#'         awesomeIcons(icon = 'home', markerColor = 'green'), popup = 'Residence') %>%
+#'     addRasterImage(g_map, colors = pal, opacity = 0.6) %>%
+#'     addLegend(pal = pal, values = raster::values(g_map), title = 'Score') %>%
+#'     addCircleMarkers(lng = data$lon, lat = data$lat, radius = 4, opacity = 1,
+#'         fill = 'black', stroke = TRUE, fillOpacity = 0.75, weight = 2,
+#'         fillColor = "red")
+#' }
+#' @importFrom geosphere distHaversine
 #' @importFrom RANN.L1 nn2
-#' @importFrom sp spTransform
-#' @importFrom igraph graph_from_adjacency_matrix
-#' @importFrom igraph components
-#' @importFrom stats complete.cases
-#' @importFrom stats dist
 #' @export
 cgt_profile <- function(lat, lon, buffer = NULL, f = NULL, g = NULL){
   # Set Defaults -----
@@ -46,7 +57,7 @@ cgt_profile <- function(lat, lon, buffer = NULL, f = NULL, g = NULL){
     dat_nn <- cbind(lat,lon) # Extract only lat and lon columns
     nn_list <- RANN.L1::nn2(dat_nn, dat_nn, k=2) # Find nearest neighbors using Manhattan distance
     nn <- nn_list$nn.idx # Extract NN pairs
-    
+
     # Calculate Manhattan Distances Between NN Pairs -----
     nn_md <- NULL
     jj <- 1
@@ -62,26 +73,26 @@ cgt_profile <- function(lat, lon, buffer = NULL, f = NULL, g = NULL){
   c <- length(lat)
   if (is.null(f)) {f <- 1.9} #default: Rossmo (1995)
   if (is.null(g)) {g <- 1.9} #default: Rossmo (1995)
-  
+
   # Computation of Map Boundaries/ Hunting Area -----
   # Rossmo, D. Kim. Geographic profiling. CRC press, 1999. pg 199
   lat_max <- max(lat) + ((max(lat) - min(lat)) / (2 * (length(lat) - 1)))
   lat_min <- min(lat) - ((max(lat) - min(lat)) / (2 * (length(lat) - 1)))
   lon_max <- max(lon) + ((max(lon) - min(lon)) / (2 * (length(lon) - 1)))
   lon_min <- min(lon) - ((max(lon) - min(lon)) / (2 * (length(lon) - 1)))
-  
+
   # Calculate Range of Bounding Box -----
   lat_range <- lat_max - lat_min
   lon_range <- lon_max - lon_min
-  
+
   # Determine Sequence of Lat and Lon Gridlines -----
   lats <- seq(lat_min,lat_max, length.out = 200)
   lons <- seq(lon_min,lon_max, length.out = 200)
-  
+
   # Create a Run Sequence for Each Incident of Grid Points -----
   run_seq <- expand.grid(lats,lons)
   names(run_seq) <- c("lats", "lons")
-  
+
   # CGT Distance Decay Function -----
   jj <- 1
   phi <- NULL
@@ -89,7 +100,7 @@ cgt_profile <- function(lat, lon, buffer = NULL, f = NULL, g = NULL){
   # PROGRESS BAR FOR LOOP
   pb = txtProgressBar(min = 0, max = length(lat)*40000, style = 3)
   tick <- 0
-  
+
   for(i in 1:length(lat)){
     for(j in 1:nrow(run_seq)){
       tick <- tick + 1
@@ -106,38 +117,9 @@ cgt_profile <- function(lat, lon, buffer = NULL, f = NULL, g = NULL){
     }
     jj <- 1
   }
-  
+
   ## Summation of Values for Each Grid Point
   sums <- rowSums(output, na.rm = TRUE)
   dat <- cbind(sums, run_seq)
   return(dat)
 }
-
-
-data <- read.csv("G:/Workspace/PhD_Research/Prediction/new/prediction_alt_methods/cases/desalvo_incidents.csv")
-data <- head(data,n=13)
-lat <- data$lat
-lon <- data$lon
-buffer=NULL
-f=NULL
-g=NULL
-
-
-g_map = sp::SpatialPixelsDataFrame(points = dat[c("lons", "lats")], data = dat)
-g_map <- raster::raster(g_map)
-raster::crs(g_map) <- sp::CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs") # assign a Coordinate Reference System
-
-# Parula color pallete for jeopardy surface
-library(leaflet)
-pal <- colorNumeric(pals::parula(200), raster::values(g_map),
-                    na.color = "transparent")
-
-leaflet() %>%
-  addTiles() %>%
-  addProviderTiles("Esri.WorldTopoMap", group = "Topo") %>%
-  addAwesomeMarkers(lng = -71.07357, lat = 42.41322, icon = awesomeIcons(icon = 'home', markerColor = 'green'), popup =
-                      "Residence") %>%
-  addRasterImage(g_map, colors = pal, opacity = 0.6) %>%
-  addLegend(pal = pal, values = raster::values(g_map), title = "Score") %>% #adds legend when using likelihood (k = 1)
-  addCircleMarkers(lng = data$lon, lat = data$lat, radius = 4, opacity=1, fill = "black", stroke=TRUE,
-                   fillOpacity = 0.75, weight=2, fillColor = "red")
