@@ -4,7 +4,7 @@
 \alias{trun_neg_exp_profile}
 \title{CrimeStat Truncated Negative Exponential Model for Geographic Profiling}
 \usage{
-trun_neg_exp_profile(lat, lon, a = NULL, b = NULL)
+trun_neg_exp_profile(lat, lon, dp = NULL, peak_lh = NULL, c = NULL)
 }
 \arguments{
 \item{lat}{a vector of latitudes for the crime incident series}
@@ -36,7 +36,7 @@ An implementation of the truncated negative exponential decay
 \donttest{
 #Using provided dataset for the Boston Strangler Incidents:
 desalvo <- data.frame(rgeoprofile:::boston_strangler)
-test <- trun_neg_exp_profile(data$lat, data$lon)
+test <- trun_neg_exp_profile(desalvo$lat, desalvo$lon)
 g_map = sp::SpatialPixelsDataFrame(points = test[c("lons", "lats")], data = test)
 g_map <- raster::raster(g_map)
 # Assign a Coordinate Reference System for the Raster
@@ -56,6 +56,11 @@ leaflet() \%>\%
         fill = 'black', stroke = TRUE, fillOpacity = 0.75, weight = 2,
         fillColor = "red")
 }
+}
+\references{
+Ned Levine, \emph{CrimeStat IV: A Spatial Statistics Program for the
+    Analysis of Crime Incident Locations (version 4.0)}. Ned Levine & Associates,
+    Houston, TX, and the National Institute of Justice, Washington, DC, June 2013.
 }
 \author{
 Jamie Spaulding, Keith Morris

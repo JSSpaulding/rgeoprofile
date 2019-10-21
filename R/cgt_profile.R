@@ -12,22 +12,25 @@
 #' @param buffer the radius for the buffer zone assumed by the distance decay
 #'     model.
 #' @param f decay formula coefficient which changes the steepness of the decay
-#'     curve after the buffer radius. If \code{NULL}, the default value for *f*
+#'     curve after the buffer radius. If \code{NULL}, the default value for '*f*'
 #'     is 1.2 as recommended by Rossmo (1995)
 #' @param g decay formula coefficient which changes the steepness of the decay
-#'     curve before the buffer radius. If \code{NULL}, the default value for *g*
+#'     curve before the buffer radius. If \code{NULL}, the default value for '*g*'
 #'     is 1.2 as recommended by Rossmo (1995)
 #' @return A data frame of points depicting a spatial grid of the hunting area
 #'     for the given incident locations. Also given are the resultant summed
 #'     values (score) for each map point. A higher resultant score indicates
 #'     a greater the probability that point contains the offender's anchor point.
 #' @author Jamie Spaulding, Keith Morris
+#' @references DK Rossmo (2000). \emph{Geographic profiling. Boca Raton, FL: CRC Press.}
+#' @references DK Rossmo (1995). \emph{Geographic profiling: Target patterns of serial
+#'     murderers.} Diss. Theses (School of Criminology)/Simon Fraser University.
 #' @keywords spatial methods
 #' @examples
 #' \donttest{
 #' #Using provided dataset for the Boston Strangler Incidents:
 #' desalvo <- data.frame(rgeoprofile:::boston_strangler)
-#' test <- cgt_profile(data$lat, data$lon)
+#' test <- cgt_profile(desalvo$lat, desalvo$lon)
 #' g_map = sp::SpatialPixelsDataFrame(points = test[c("lons", "lats")], data = test)
 #' g_map <- raster::raster(g_map)
 #' # Assign a Coordinate Reference System for the Raster
@@ -49,23 +52,29 @@
 #' }
 #' @importFrom geosphere distHaversine
 #' @importFrom RANN.L1 nn2
+#' @importFrom utils txtProgressBar
+#' @importFrom utils setTxtProgressBar
 #' @export
 cgt_profile <- function(lat, lon, buffer = NULL, f = NULL, g = NULL){
   # Set Defaults -----
   if (is.null(buffer)) {
     # Calculate Incident Buffer Zone -----
-    dat_nn <- cbind(lat,lon) # Extract only lat and lon columns
-    nn_list <- RANN.L1::nn2(dat_nn, dat_nn, k=2) # Find nearest neighbors using Manhattan distance
+    dat_nn <- cbind(lat, lon) # Extract only lat and lon columns
+    nn_list <- RANN.L1::nn2(dat_nn, dat_nn, k = 2) # Find NNs using Manhattan distance
     nn <- nn_list$nn.idx # Extract NN pairs
 
     # Calculate Manhattan Distances Between NN Pairs -----
     nn_md <- NULL
     jj <- 1
     for(i in 1:nrow(nn)){
-      incid1 <- dat_nn[nn[i,1],]
-      incid2 <- dat_nn[nn[i,2],]
-      dx <- geosphere::distHaversine(p1 = c(incid1[2], incid1[1]), p2 = c(incid2[2], incid1[1]), r = 3958) # hold y (lat) constant
-      dy <- geosphere::distHaversine(p1 = c(incid1[2], incid1[1]), p2 = c(incid1[2], incid2[1]), r = 3958) # hold x (lon) constant
+      incid1 <- dat_nn[nn[i,1], ]
+      incid2 <- dat_nn[nn[i,2], ]
+      dx <- geosphere::distHaversine(p1 = c(incid1[2], incid1[1]),
+                                     p2 = c(incid2[2], incid1[1]),
+                                     r = 3958) # hold y (lat) constant
+      dy <- geosphere::distHaversine(p1 = c(incid1[2], incid1[1]),
+                                     p2 = c(incid1[2], incid2[1]),
+                                     r = 3958) # hold x (lon) constant
       nn_md[jj] <- dx + dy
       jj <- jj+1
     }
@@ -75,7 +84,7 @@ cgt_profile <- function(lat, lon, buffer = NULL, f = NULL, g = NULL){
   if (is.null(g)) {g <- 1.9} #default: Rossmo (1995)
 
   # Computation of Map Boundaries/ Hunting Area -----
-  # Rossmo, D. Kim. Geographic profiling. CRC press, 1999. pg 199
+  # Rossmo (2000)
   lat_max <- max(lat) + ((max(lat) - min(lat)) / (2 * (length(lat) - 1)))
   lat_min <- min(lat) - ((max(lat) - min(lat)) / (2 * (length(lat) - 1)))
   lon_max <- max(lon) + ((max(lon) - min(lon)) / (2 * (length(lon) - 1)))
@@ -90,29 +99,35 @@ cgt_profile <- function(lat, lon, buffer = NULL, f = NULL, g = NULL){
   lons <- seq(lon_min,lon_max, length.out = 200)
 
   # Create a Run Sequence for Each Incident of Grid Points -----
-  run_seq <- expand.grid(lats,lons)
+  run_seq <- expand.grid(lats, lons)
   names(run_seq) <- c("lats", "lons")
 
   # CGT Distance Decay Function -----
   jj <- 1
   phi <- NULL
   output <- data.frame()
-  # PROGRESS BAR FOR LOOP
-  pb = txtProgressBar(min = 0, max = length(lat)*40000, style = 3)
+  # Progress Bar
+  pb = utils::txtProgressBar(min = 0, max = length(lat) * 40000, style = 3)
   tick <- 0
 
   for(i in 1:length(lat)){
     for(j in 1:nrow(run_seq)){
       tick <- tick + 1
-      setTxtProgressBar(pb, tick)
+      utils::setTxtProgressBar(pb, tick)
       xn <- lon[i]
       yn <- lat[i]
       xi <- run_seq$lons[j]
       yi <- run_seq$lats[j]
-      dx <- geosphere::distHaversine(p1 = c(xn, yi), p2 = c(xi, yi), r = 3958) #hold y (lat) constant
-      dy <- geosphere::distHaversine(p1 = c(xi, yn), p2 = c(xi, yi), r = 3958) #hold y (lat) constant
+      dx <- geosphere::distHaversine(p1 = c(xn, yi),
+                                     p2 = c(xi, yi),
+                                     r = 3958) #hold y (lat) constant
+      dy <- geosphere::distHaversine(p1 = c(xi, yn),
+                                     p2 = c(xi, yi),
+                                     r = 3958) #hold y (lat) constant
       if(dx + dy > 1){phi <- 1} else {phi <- 0}
-      output[jj,i] <- (phi / ((dx + dy) ^ f)) + (((1 - phi) * (buffer ^ (g - f))) / (((2 * buffer) - (dx - dy)) ^ g)) #Rossmo Formula
+      output[jj,i] <- (phi / ((dx + dy) ^ f)) +
+        (((1 - phi) * (buffer ^ (g - f))) /
+           (((2 * buffer) - (dx - dy)) ^ g)) #Rossmo Formula
       jj <- jj + 1
     }
     jj <- 1

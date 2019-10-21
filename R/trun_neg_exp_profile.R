@@ -19,12 +19,15 @@
 #'     values (score) for each map point. A higher resultant score indicates
 #'     a greater the probability that point contains the offender's anchor point.
 #' @author Jamie Spaulding, Keith Morris
+#' @references Ned Levine, \emph{CrimeStat IV: A Spatial Statistics Program for the
+#'     Analysis of Crime Incident Locations (version 4.0)}. Ned Levine & Associates,
+#'     Houston, TX, and the National Institute of Justice, Washington, DC, June 2013.
 #' @keywords spatial methods
 #' @examples
 #' \donttest{
 #' #Using provided dataset for the Boston Strangler Incidents:
 #' desalvo <- data.frame(rgeoprofile:::boston_strangler)
-#' test <- trun_neg_exp_profile(data$lat, data$lon)
+#' test <- trun_neg_exp_profile(desalvo$lat, desalvo$lon)
 #' g_map = sp::SpatialPixelsDataFrame(points = test[c("lons", "lats")], data = test)
 #' g_map <- raster::raster(g_map)
 #' # Assign a Coordinate Reference System for the Raster
@@ -46,8 +49,10 @@
 #' }
 #' @importFrom geosphere distHaversine
 #' @importFrom RANN.L1 nn2
+#' @importFrom utils txtProgressBar
+#' @importFrom utils setTxtProgressBar
 #' @export
-trun_neg_exp_profile <- function(lat, lon, a = NULL, b = NULL){
+trun_neg_exp_profile <- function(lat, lon, dp = NULL, peak_lh = NULL, c = NULL){
   # Set Defaults -----
   if (is.null(dp)) {dp <- 0.4} #default: Levine (2013)
   if (is.null(peak_lh)) {peak_lh <- 13.8} #default: Levine (2013)
@@ -69,25 +74,27 @@ trun_neg_exp_profile <- function(lat, lon, a = NULL, b = NULL){
   lons <- seq(lon_min,lon_max, length.out = 200)
 
   # Create a Run Sequence for Each Incident of Grid Points -----
-  run_seq <- expand.grid(lats,lons)
+  run_seq <- expand.grid(lats, lons)
   names(run_seq) <- c("lats", "lons")
 
   # Linear Distance Decay Function -----
   jj <- 1
   output <- data.frame()
   # PROGRESS BAR FOR LOOP
-  pb = txtProgressBar(min = 0, max = length(lat)*40000, style = 3)
+  pb = utils::txtProgressBar(min = 0, max = length(lat) * 40000, style = 3)
   tick <- 0
 
   for(i in 1:length(lat)){
     for(j in 1:nrow(run_seq)){
       tick <- tick + 1
-      setTxtProgressBar(pb, tick)
+      utils::setTxtProgressBar(pb, tick)
       xn <- lon[i]
       yn <- lat[i]
       xi <- run_seq$lons[j]
       yi <- run_seq$lats[j]
-      d <- geosphere::distHaversine(p1 = c(xn, yn), p2 = c(xi, yi), r = 3958)
+      d <- geosphere::distHaversine(p1 = c(xn, yn),
+                                    p2 = c(xi, yi),
+                                    r = 3958)
       if(d <= dp){out <- (B * d)}
       if(d > dp){out <- (peak_lh * exp(c * (d - dp)))}
       output[jj,i] <- out

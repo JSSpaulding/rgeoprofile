@@ -12,10 +12,10 @@ linear_profile(lat, lon, a = NULL, b = NULL)
 \item{lon}{a vector of latitudes for the crime incident series}
 
 \item{a}{the slope coefficient which defines the function decrease in distance.
-If \code{NULL}, the default value for 'a' is 1.9 (Levine 2013)}
+If \code{NULL}, the default value for '*a*' is 1.9 (Levine 2013)}
 
 \item{b}{a constant for the distance decay function
-If \code{NULL}, the default value for 'b' is -0.06 (Levine 2013)}
+If \code{NULL}, the default value for '*b*' is -0.06 (Levine 2013)}
 }
 \value{
 A data frame of points depicting a spatial grid of the hunting area
@@ -33,7 +33,7 @@ An implementation of the linear decay model for serial crime
 \donttest{
 #Using provided dataset for the Boston Strangler Incidents:
 desalvo <- data.frame(rgeoprofile:::boston_strangler)
-test <- linear_profile(data$lat, data$lon)
+test <- linear_profile(desalvo$lat, desalvo$lon)
 g_map = sp::SpatialPixelsDataFrame(points = test[c("lons", "lats")], data = test)
 g_map <- raster::raster(g_map)
 # Assign a Coordinate Reference System for the Raster
@@ -53,6 +53,11 @@ leaflet() \%>\%
         fill = 'black', stroke = TRUE, fillOpacity = 0.75, weight = 2,
         fillColor = "red")
 }
+}
+\references{
+Ned Levine, \emph{CrimeStat IV: A Spatial Statistics Program for the
+    Analysis of Crime Incident Locations (version 4.0)}. Ned Levine & Associates,
+    Houston, TX, and the National Institute of Justice, Washington, DC, June 2013.
 }
 \author{
 Jamie Spaulding, Keith Morris

@@ -15,11 +15,11 @@ cgt_profile(lat, lon, buffer = NULL, f = NULL, g = NULL)
 model.}
 
 \item{f}{decay formula coefficient which changes the steepness of the decay
-curve after the buffer radius. If \code{NULL}, the default value for *f*
+curve after the buffer radius. If \code{NULL}, the default value for '*f*'
 is 1.2 as recommended by Rossmo (1995)}
 
 \item{g}{decay formula coefficient which changes the steepness of the decay
-curve before the buffer radius. If \code{NULL}, the default value for *g*
+curve before the buffer radius. If \code{NULL}, the default value for '*g*'
 is 1.2 as recommended by Rossmo (1995)}
 }
 \value{
@@ -39,7 +39,7 @@ An implementation of the criminal geographic targeting model
 \donttest{
 #Using provided dataset for the Boston Strangler Incidents:
 desalvo <- data.frame(rgeoprofile:::boston_strangler)
-test <- cgt_profile(data$lat, data$lon)
+test <- cgt_profile(desalvo$lat, desalvo$lon)
 g_map = sp::SpatialPixelsDataFrame(points = test[c("lons", "lats")], data = test)
 g_map <- raster::raster(g_map)
 # Assign a Coordinate Reference System for the Raster
@@ -59,6 +59,12 @@ leaflet() \%>\%
         fill = 'black', stroke = TRUE, fillOpacity = 0.75, weight = 2,
         fillColor = "red")
 }
+}
+\references{
+DK Rossmo (2000). \emph{Geographic profiling. Boca Raton, FL: CRC Press.}
+
+DK Rossmo (1995). \emph{Geographic profiling: Target patterns of serial
+    murderers.} Diss. Theses (School of Criminology)/Simon Fraser University.
 }
 \author{
 Jamie Spaulding, Keith Morris

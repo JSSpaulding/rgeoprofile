@@ -4,11 +4,23 @@ Title: Geographic Profiling Methods for Serial Crime Analysis
 Version: 0.1.0
 Author: Jamie Spaulding and Keith Morris
 Maintainer: Jamie Spaulding <jspauldi@mix.wvu.edu>
-Description: NEw
-License: MIT License
+Description: An implementation of functions for the analysis of serial crime 
+    incidents. The package implements algorithms for the geographical profiling 
+    of serial incidents in attempt to prioritize the area in which the anchor 
+    point or home base of the perpetrator is located. 
+Depends: R (>= 3.5.0)
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
 Imports:
+    aspace,
     geosphere,
-    RANN.L1
+    grDevices,
+    leaflet,
+    pals,
+    RANN.L1, 
+    raster,
+    sp,
+    splancs,
+    utils

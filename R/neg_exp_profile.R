@@ -18,10 +18,12 @@
 #'     need to be provided from 'a' and 'b' as the default parameters will be
 #'     used. Default parameters for the CrimeStat are: \eqn{a = 1.89} \eqn{a = -0.06}.
 #'     Default parameters for the Dragnet are: \eqn{a = b = 1}. If using a custom
-#'     model, values must be provided for 'a' and 'b'.
+#'     model, values must be provided for '*a*' and '*b*'.
 #' @param buffer TRUE/FALSE. Whether a buffer zone where a likelihood of zero
 #'     is fit around the incidents and a plateau of peak likelihood is fit prior
-#'     to the negative exponential decay. XXXXX Details about plat buff
+#'     to the negative exponential decay. The function calculates the buffer zone
+#'     and the plateau area to each be half of the average nearest neighbor
+#'     distance.
 #' @param a the slope coefficient which defines the function decrease in distance
 #' @param b exponential multiplier for the distance decay function
 #' @return A data frame of points depicting a spatial grid of the hunting area
@@ -29,6 +31,12 @@
 #'     values (score) for each map point. A higher resultant score indicates
 #'     a greater the probability that point contains the offender's anchor point.
 #' @author Jamie Spaulding, Keith Morris
+#' @references Ned Levine, \emph{CrimeStat IV: A Spatial Statistics Program for the
+#'     Analysis of Crime Incident Locations (version 4.0)}. Ned Levine & Associates,
+#'     Houston, TX, and the National Institute of Justice, Washington, DC, June 2013.
+#' @references D Canter, T Coffey, M Huntley & C Missen. (2000). \emph{Predicting
+#'     serial killers' home base using a decision support system.} Journal of
+#'     quantitative criminology, 16(4), 457-478.
 #' @keywords spatial methods
 #' @examples
 #' \donttest{
@@ -56,8 +64,11 @@
 #' }
 #' @importFrom geosphere distHaversine
 #' @importFrom RANN.L1 nn2
+#' @importFrom utils txtProgressBar
+#' @importFrom utils setTxtProgressBar
 #' @export
-neg_exp_profile <- function(lat, lon, method = c("CrimeStat", "Dragnet", "Custom"), buffer = FALSE, a = NULL, b = NULL){
+neg_exp_profile <- function(lat, lon, method = c("CrimeStat", "Dragnet", "Custom"),
+                            buffer = FALSE, a = NULL, b = NULL){
   # Set Defaults -----
   if (method == "Custom" & is.null(a)) {
     stop("If using a custom model, both 'a' and 'b' must be specified")
@@ -68,11 +79,11 @@ neg_exp_profile <- function(lat, lon, method = c("CrimeStat", "Dragnet", "Custom
   if (method == "CrimeStat") {
     a <- 1.89
     b <- -0.06
-  }
+  }# Levine (2013)
   if (method == "Dragnet") {
     a <- 1
     b <- -1
-  }
+  } #Canter et al. (2000)
 
   # Computation of Map Boundaries/ Hunting Area -----
   lat_max <- max(lat) + ((max(lat) - min(lat)) / (2 * (length(lat) - 1)))
@@ -89,44 +100,46 @@ neg_exp_profile <- function(lat, lon, method = c("CrimeStat", "Dragnet", "Custom
   lons <- seq(lon_min,lon_max, length.out = 200)
 
   # Create a Run Sequence for Each Incident of Grid Points -----
-  run_seq <- expand.grid(lats,lons)
+  run_seq <- expand.grid(lats, lons)
   names(run_seq) <- c("lats", "lons")
 
   if (buffer == TRUE) {
     # Calculate Incident Buffer Zone -----
     dat_nn <- cbind(lat,lon) # Extract only lat and lon columns
-    nn_list <- RANN.L1::nn2(dat_nn, dat_nn, k=2) # Find nearest neighbors using Manhattan distance
+    nn_list <- RANN.L1::nn2(dat_nn, dat_nn, k=2) # Find NNs
     nn <- nn_list$nn.idx # Extract NN pairs
 
-    # Calculate Manhattan Distances Between NN Pairs -----
-    nn_md <- NULL
+    # Calculate Distances Between NN Pairs -----
+    nn_d <- NULL
     jj <- 1
     for(i in 1:nrow(nn)){
       incid1 <- dat_nn[nn[i,1],]
       incid2 <- dat_nn[nn[i,2],]
-      dx <- geosphere::distHaversine(p1 = c(incid1[2], incid1[1]), p2 = c(incid2[2], incid1[1]), r = 3958) # hold y (lat) constant
-      dy <- geosphere::distHaversine(p1 = c(incid1[2], incid1[1]), p2 = c(incid1[2], incid2[1]), r = 3958) # hold x (lon) constant
-      nn_md[jj] <- dx + dy
+      nn_d[jj] <- geosphere::distHaversine(p1 = c(incid1[2], incid1[1]),
+                                            p2 = c(incid2[2], incid2[1]),
+                                            r = 3958) # hold y (lat) constant
       jj <- jj+1
     }
-    plat_zone <- mean(nn_md)
-    buf_zone <- (mean(nn_md)) / 2
+    plat_zone <- mean(nn_d) #Canter et al. (2000)
+    buf_zone <- (mean(nn_d)) / 2 #Canter et al. (2000)
 
     jj <- 1
     output <- data.frame()
     # Progress Bar
-    pb = txtProgressBar(min = 0, max = length(lat)*40000, style = 3)
+    pb = utils::txtProgressBar(min = 0, max = length(lat) * 40000, style = 3)
     tick <- 0
 
     for(i in 1:length(lat)){
       for(j in 1:nrow(run_seq)){
         tick <- tick + 1
-        setTxtProgressBar(pb, tick)
+        utils::setTxtProgressBar(pb, tick)
         xn <- lon[i]
         yn <- lat[i]
         xi <- run_seq$lons[j]
         yi <- run_seq$lats[j]
-        d <- geosphere::distHaversine(p1 = c(xn, yn), p2 = c(xi, yi), r = 3958)
+        d <- geosphere::distHaversine(p1 = c(xn, yn),
+                                      p2 = c(xi, yi),
+                                      r = 3958)
         if(d < buf_zone) {out <- 0}
         if(d >= buf_zone & d < plat_zone) {out <- 1}
         if(d > plat_zone) {out <- (a * exp(b * (d - buf_zone)))}
@@ -144,12 +157,14 @@ neg_exp_profile <- function(lat, lon, method = c("CrimeStat", "Dragnet", "Custom
     for(i in 1:length(lat)){
       for(j in 1:nrow(run_seq)){
         tick <- tick + 1
-        setTxtProgressBar(pb, tick)
+        utils::setTxtProgressBar(pb, tick)
         xn <- lon[i]
         yn <- lat[i]
         xi <- run_seq$lons[j]
         yi <- run_seq$lats[j]
-        d <- geosphere::distHaversine(p1 = c(xn, yn), p2 = c(xi, yi), r = 3958)
+        d <- geosphere::distHaversine(p1 = c(xn, yn),
+                                      p2 = c(xi, yi),
+                                      r = 3958)
         output[jj,i] <- a * exp(b * d)
         jj <- jj+1
       }

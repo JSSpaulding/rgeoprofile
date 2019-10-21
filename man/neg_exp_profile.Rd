@@ -17,11 +17,13 @@ decay function. If using the CrimeStat or Dragnet method, values do not
 need to be provided from 'a' and 'b' as the default parameters will be
 used. Default parameters for the CrimeStat are: \eqn{a = 1.89} \eqn{a = -0.06}.
 Default parameters for the Dragnet are: \eqn{a = b = 1}. If using a custom
-model, values must be provided for 'a' and 'b'.}
+model, values must be provided for '*a*' and '*b*'.}
 
 \item{buffer}{TRUE/FALSE. Whether a buffer zone where a likelihood of zero
 is fit around the incidents and a plateau of peak likelihood is fit prior
-to the negative exponential decay. XXXXX Details about plat buff}
+to the negative exponential decay. The function calculates the buffer zone
+and the plateau area to each be half of the average nearest neighbor
+distance.}
 
 \item{a}{the slope coefficient which defines the function decrease in distance}
 
@@ -68,6 +70,15 @@ leaflet() \%>\%
         fill = 'black', stroke = TRUE, fillOpacity = 0.75, weight = 2,
         fillColor = "red")
 }
+}
+\references{
+Ned Levine, \emph{CrimeStat IV: A Spatial Statistics Program for the
+    Analysis of Crime Incident Locations (version 4.0)}. Ned Levine & Associates,
+    Houston, TX, and the National Institute of Justice, Washington, DC, June 2013.
+
+D Canter, T Coffey, M Huntley & C Missen. (2000). \emph{Predicting
+    serial killers' home base using a decision support system.} Journal of
+    quantitative criminology, 16(4), 457-478.
 }
 \author{
 Jamie Spaulding, Keith Morris
