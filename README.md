@@ -163,3 +163,17 @@ harm_mean_pred(desalvo$lat, desalvo$lon)
 * **Jamie Spaulding** - *Author, Contributor*
 
 * **Keith Morris** - *Contributor*
+
+## References
+D Canter, T Coffey, M Huntley & C Missen. (2000). \emph{Predicting serial killers' 
+    home base using a decision support system.} Journal of quantitative 
+    criminology, 16(4), 457-478.
+    
+Ned Levine, \emph{CrimeStat IV: A Spatial Statistics Program for the Analysis 
+    of Crime Incident Locations (version 4.0)}. Ned Levine & Associates,
+    Houston, TX, and the National Institute of Justice, Washington, DC, June 2013.
+    
+DK Rossmo (1995). \emph{Geographic profiling: Target patterns of serial 
+    murderers.} Diss. Theses (School of Criminology)/Simon Fraser University.
+
+DK Rossmo (2000). \emph{Geographic profiling. Boca Raton, FL: CRC Press.}
