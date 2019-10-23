@@ -36,11 +36,7 @@ The following examples illustrate the usage of the various distance decay functi
 
 ### cgt_profile
 
-The *cgt_profile* function applies the criminal geographic targeting (CGT) model for serial crime analysis developed by DK Rossmo for geographic profiling and prediction of perpetrator anchor point/home base. The CGT distance decay function assumes a buffer zone around the incidents where the likelihood of perpetrator anchor point increases to a peak likelihood before decaying as distance further increases. This model also utilizes Manhattan distance for the likelihood calculation. The formula for the distance decay function is:
-
-\begin{equation}
-p_{i,j} = \sum_{n=1}^{n} \frac{\phi_{i,j}}{(\mid X_{i} - x_{n} \mid + \mid Y_{i} - y_{n} \mid) ^ f} + \frac{(1 - \phi_{i,j}) (B^{g-f})}{(2B - \mid X_{i} - x_{n} \mid - \mid Y_{i} - y_{n} \mid) ^ g}
-\end{equation}
+The *cgt_profile* function applies the criminal geographic targeting (CGT) model for serial crime analysis developed by DK Rossmo for geographic profiling and prediction of perpetrator anchor point/home base. The CGT distance decay function assumes a buffer zone around the incidents where the likelihood of perpetrator anchor point increases to a peak likelihood before decaying as distance further increases. This model also utilizes Manhattan distance for the likelihood calculation.
 
 When plotted, the likelihood of the perpetrator's anchor point is illustrated by the following:
 
@@ -77,11 +73,7 @@ leaflet() %>%
 ![](../master/images/rossmo_geoprofile.png)
 
 ### neg_exp_profile
-The *neg_exp_profile* function applies variations of the negative exponential decay model for serial crime analysis. In this model, the decline is at a constant rate, therefore the likelihood of the perpetrator's home base drops quickly from the incident locations until it approaches zero likelihood. The user can select different variants including the CrimeStat base model, the Dragnet model, or whether a buffer and plateau is present at the start of the decay function. This model assumes that the likelihood of the serial perpetrator's home base decreases in a exponential fashion as the distance increases from the crime incidents. This model utilizes Euclidean distance for the likelihood calculation. The general formula for the distance decay function is:
-
-\begin{equation}
-p_{i,j} = ae^{-bd_{i,j}}
-\end{equation}
+The *neg_exp_profile* function applies variations of the negative exponential decay model for serial crime analysis. In this model, the decline is at a constant rate, therefore the likelihood of the perpetrator's home base drops quickly from the incident locations until it approaches zero likelihood. The user can select different variants including the CrimeStat base model, the Dragnet model, or whether a buffer and plateau is present at the start of the decay function. This model assumes that the likelihood of the serial perpetrator's home base decreases in a exponential fashion as the distance increases from the crime incidents. This model utilizes Euclidean distance for the likelihood calculation.
 
 An illustration of the difference between the base negative exponential function in comparison to the inclusion of a plateau and buffer is shown in the following:
 
@@ -100,11 +92,7 @@ The following image provides a comparison of the different distance decay functi
 
 #### linear_profile
 
-The *linear_profile* function applies the linear decay model for serial crime analysis within CrimeStat. This model assumes that the likelihood of the serial perpetrator's home base decreases in a linear fashion as the distance increases from the crime incidents. This model utilizes Euclidean distance for the likelihood calculation. The formula for the distance decay function is:
-
-\begin{equation}
-p_{i,j} = a + bd_{i,j}
-\end{equation}
+The *linear_profile* function applies the linear decay model for serial crime analysis within CrimeStat. This model assumes that the likelihood of the serial perpetrator's home base decreases in a linear fashion as the distance increases from the crime incidents. This model utilizes Euclidean distance for the likelihood calculation. 
 
 ```
 desalvo <- data.frame(rgeoprofile:::boston_strangler)
@@ -114,11 +102,7 @@ test <- linear_profile(desalvo$lat, desalvo$lon)
 
 #### lognorm_profile
 
-The *lognorm_profile* function applies the lognormal decay model for serial crime analysis within CrimeStat. This model is very similar to the normal model except with more skew to either side. If there is reason to believe that the perpetrator's residence is closer to the incidents, this function can take the form of a very rapid increase near incident with a gradual decline from the peak likelihood. This model utilizes Euclidean distance for the likelihood calculation. The formula for the distance decay function is:
-
-\begin{equation}
-p_{i,j} = a \frac{1}{d_{i,j}^2 S \sqrt{2\pi}}^\frac{[\ln{(d_{i,j}^2 - \overline{d})]^2}}{2S^2}
-\end{equation}
+The *lognorm_profile* function applies the lognormal decay model for serial crime analysis within CrimeStat. This model is very similar to the normal model except with more skew to either side. If there is reason to believe that the perpetrator's residence is closer to the incidents, this function can take the form of a very rapid increase near incident with a gradual decline from the peak likelihood. This model utilizes Euclidean distance for the likelihood calculation.
 
 ```
 desalvo <- data.frame(rgeoprofile:::boston_strangler)
@@ -128,11 +112,7 @@ test <- lognorm_profile(desalvo$lat, desalvo$lon)
 
 #### norm_profile
 
-The *norm_profile* function applies the normal decay model for serial crime analysis within CrimeStat. This model assumes that there is a peak likelihood of the serial perpetrator's home base at some optimal distance from the crime incidents. The function rises in likelihood to that distance and then declines at an equal rate (both prior to and after the peak likelhihood) giving the symetrical normal distribution. This model utilizes Euclidean distance for the likelihood calculation. The formula for the distance decay function is:
-
-\begin{equation}
-p_{i,j} = a \frac{1}{S \sqrt{2\pi}}e^{\frac{-1}{2}(\frac{(d_{i,j} - \overline{d})}{S})^2}
-\end{equation}
+The *norm_profile* function applies the normal decay model for serial crime analysis within CrimeStat. This model assumes that there is a peak likelihood of the serial perpetrator's home base at some optimal distance from the crime incidents. The function rises in likelihood to that distance and then declines at an equal rate (both prior to and after the peak likelhihood) giving the symetrical normal distribution. This model utilizes Euclidean distance for the likelihood calculation. 
 
 ```
 desalvo <- data.frame(rgeoprofile:::boston_strangler)
@@ -142,14 +122,7 @@ test <- norm_profile(desalvo$lat, desalvo$lon)
 
 #### trun_neg_exp_profile
 
-The *trun_neg_exp_profile* function applies the truncated negative exponential decay model for serial crime analysis within CrimeStat. This is a joint function composed of both the linear and the negative exponential. For distances proximal to the incidents, a positive linear function is defined from zero likelihood at distance zero to a location of peak likelihood. At the peak likelihood the function takes the form of a negative exponential, rapidly declining as distance increases. This model utilizes Euclidean distance for the likelihood calculation. The formula for the distance decay function is:
-
-\begin{equation}
-\begin{aligned}
-p_{i,j} & = bd_{i,j}\ for\ 0 \leq d_{i,j} \leq d_{p} \\
-& = ae^{-cd_{i,j}}\ for\ d_{i,j} > d_{p}
-\end{aligned}
-\end{equation}
+The *trun_neg_exp_profile* function applies the truncated negative exponential decay model for serial crime analysis within CrimeStat. This is a joint function composed of both the linear and the negative exponential. For distances proximal to the incidents, a positive linear function is defined from zero likelihood at distance zero to a location of peak likelihood. At the peak likelihood the function takes the form of a negative exponential, rapidly declining as distance increases. This model utilizes Euclidean distance for the likelihood calculation. 
 
 ```
 desalvo <- data.frame(rgeoprofile:::boston_strangler)
