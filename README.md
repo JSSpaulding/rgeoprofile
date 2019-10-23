@@ -80,7 +80,6 @@ An illustration of the difference between the base negative exponential function
 ![](../rgeoprofile/images/neg_exp_ddf.png)
 
 ```
-desalvo <- data.frame(rgeoprofile:::boston_strangler)
 test <- neg_exp_profile(desalvo$lat, desalvo$lon, method = "CrimeStat")
 ## See Mapping the Resultant Geographic Profile above for plotting the results
 ```
@@ -95,7 +94,6 @@ The following image provides a comparison of the different distance decay functi
 The *linear_profile* function applies the linear decay model for serial crime analysis within CrimeStat. This model assumes that the likelihood of the serial perpetrator's home base decreases in a linear fashion as the distance increases from the crime incidents. This model utilizes Euclidean distance for the likelihood calculation. 
 
 ```
-desalvo <- data.frame(rgeoprofile:::boston_strangler)
 test <- linear_profile(desalvo$lat, desalvo$lon)
 ## See Mapping the Resultant Geographic Profile above for plotting the results
 ```
@@ -105,7 +103,6 @@ test <- linear_profile(desalvo$lat, desalvo$lon)
 The *lognorm_profile* function applies the lognormal decay model for serial crime analysis within CrimeStat. This model is very similar to the normal model except with more skew to either side. If there is reason to believe that the perpetrator's residence is closer to the incidents, this function can take the form of a very rapid increase near incident with a gradual decline from the peak likelihood. This model utilizes Euclidean distance for the likelihood calculation.
 
 ```
-desalvo <- data.frame(rgeoprofile:::boston_strangler)
 test <- lognorm_profile(desalvo$lat, desalvo$lon)
 ## See Mapping the Resultant Geographic Profile above for plotting the results
 ```
@@ -115,7 +112,6 @@ test <- lognorm_profile(desalvo$lat, desalvo$lon)
 The *norm_profile* function applies the normal decay model for serial crime analysis within CrimeStat. This model assumes that there is a peak likelihood of the serial perpetrator's home base at some optimal distance from the crime incidents. The function rises in likelihood to that distance and then declines at an equal rate (both prior to and after the peak likelhihood) giving the symetrical normal distribution. This model utilizes Euclidean distance for the likelihood calculation. 
 
 ```
-desalvo <- data.frame(rgeoprofile:::boston_strangler)
 test <- norm_profile(desalvo$lat, desalvo$lon)
 ## See Mapping the Resultant Geographic Profile above for plotting the results
 ```
@@ -125,7 +121,6 @@ test <- norm_profile(desalvo$lat, desalvo$lon)
 The *trun_neg_exp_profile* function applies the truncated negative exponential decay model for serial crime analysis within CrimeStat. This is a joint function composed of both the linear and the negative exponential. For distances proximal to the incidents, a positive linear function is defined from zero likelihood at distance zero to a location of peak likelihood. At the peak likelihood the function takes the form of a negative exponential, rapidly declining as distance increases. This model utilizes Euclidean distance for the likelihood calculation. 
 
 ```
-desalvo <- data.frame(rgeoprofile:::boston_strangler)
 test <- trun_neg_exp_profile(desalvo$lat, desalvo$lon)
 ## See Mapping the Resultant Geographic Profile above for plotting the results
 ```
@@ -139,7 +134,6 @@ The following examples illustrate the usage of the various centrographic functio
 The *cmd_pred* function calculates the center of minimum distance (CMD) for a set of incident coordinates. This function returns a singular coordinate for the CMD which can be used for geographic profiling or area prioritization under the assumption that the home base of the perpetrator is centrally located among the incidents.
 
 ```
-desalvo <- data.frame(rgeoprofile:::boston_strangler)
 cmd_pred(desalvo$lat, desalvo$lon)
 ```
 
@@ -148,7 +142,6 @@ cmd_pred(desalvo$lat, desalvo$lon)
 The *geom_mean_pred* function calculates the geometric mean for a set of incident coordinates. This function returns a singular coordinate which can be used for geographic profiling or area prioritization under the assumption that the home base of the perpetrator is centrally located among the incidents.
 
 ```
-desalvo <- data.frame(rgeoprofile:::boston_strangler)
 geom_mean_pred(desalvo$lat, desalvo$lon)
 ```
 
@@ -157,10 +150,8 @@ geom_mean_pred(desalvo$lat, desalvo$lon)
 The *harm_mean_pred* function calculates the harmonic mean for a set of incident coordinates. This function returns a singular coordinate which can be used for geographic profiling or area prioritization under the assumption that the home base of the perpetrator is centrally located among the incidents.
 
 ```
-desalvo <- data.frame(rgeoprofile:::boston_strangler)
 harm_mean_pred(desalvo$lat, desalvo$lon)
 ```
-
 
 ## Authors
 
