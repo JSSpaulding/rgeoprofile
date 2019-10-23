@@ -1,2 +1,5 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^\images$
+^cran-comments\.md$
+^\.travis\.yml$
