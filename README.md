@@ -1,5 +1,10 @@
 # rgeoprofile: Geographic Profiling Methods for Serial Crime Analysis
 
+<!-- badges: start -->
+[![Build 
+Status](https://travis-ci.org/JSSpaulding/rgeoprofile.svg?branch=master)](https://travis-ci.org/JSSpaulding/rgeoprofile)
+<!-- badges: end -->
+
 ## Overview
 
 **rgeoprofile** is a package containing various functions for the analysis of serial crime incidents. The package implements algorithms for the geographical profiling of serial incidents in attempt to prioritize the area in which the anchor point or home base of the perpetrator is located. These functions include centrographic methods (center of minimum distance, geometric and harmonic means) and distance decay functions in the following forms: Rossmo's formula, linear, negative exponential (CrimeStat and Dragnet, with/out plateau and buffer), normal, lognormal, and truncated negative exponential.
