@@ -14,11 +14,9 @@
 #' @author Jamie Spaulding, Keith Morris
 #' @keywords spatial methods
 #' @examples
-#' \donttest{
 #' #Using provided dataset for the Boston Strangler Incidents:
 #' desalvo <- data.frame(rgeoprofile:::boston_strangler)
 #' harm_mean_pred(desalvo$lat, desalvo$lon)
-#' }
 #' @export
 harm_mean_pred <- function(lat, lon){
   n <- length(lat)

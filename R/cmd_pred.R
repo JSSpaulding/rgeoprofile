@@ -14,11 +14,9 @@
 #' @author Jamie Spaulding, Keith Morris
 #' @keywords spatial methods
 #' @examples
-#' \donttest{
 #' #Using provided dataset for the Boston Strangler Incidents:
 #' desalvo <- data.frame(rgeoprofile:::boston_strangler)
 #' cmd_pred(desalvo$lat, desalvo$lon)
-#' }
 #' @importFrom aspace distances
 #' @importFrom grDevices chull
 #' @importFrom splancs gridpts
@@ -85,3 +83,4 @@ cmd_pred <- function(lat, lon) {
   CMD <- cbind(result[nrow(result), 2:5])
   return(data.frame(lat = CMD[,1], lon = CMD[,2]))
 }
+
