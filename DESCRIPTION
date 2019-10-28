@@ -12,7 +12,7 @@ Description: An implementation of functions for the analysis of serial crime
     Canter, Coffey, Huntley, and Missen (2000) <doi:10.1023/A:1007551316253>,
     the CrimeStat software by Levine (2013) 
     <https://nij.ojp.gov/topics/articles/crimestat-spatial-statistics-program-analysis-crime-incident-locations>,
-    and the criminal geographic targeting model by Rossmo (2000, ISBN:978-0849381294)
+    and the criminal geographic targeting model outlined in Rossmo (2000, ISBN:978-0849381294)
     and Rossmo (1995) <http://summit.sfu.ca/item/6820>.
 Depends: R (>= 3.5.0)
 License: GPL-3
