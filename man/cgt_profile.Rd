@@ -4,7 +4,7 @@
 \alias{cgt_profile}
 \title{Criminal Geographic Targeting Model for Geographic Profiling (Rossmo Formula)}
 \usage{
-cgt_profile(lat, lon, buffer = NULL, f = NULL, g = NULL)
+cgt_profile(lat, lon, buffer = NULL, f = NULL, g = NULL, n = NULL)
 }
 \arguments{
 \item{lat}{a vector of latitudes for the crime incident series}
@@ -21,6 +21,9 @@ is 1.2 as recommended by Rossmo (1995)}
 \item{g}{decay formula coefficient which changes the steepness of the decay
 curve before the buffer radius. If \code{NULL}, the default value for '*g*'
 is 1.2 as recommended by Rossmo (1995)}
+
+\item{n}{total number of cells within the spatial grid for the jeopardy surface.
+If \code{NULL}, the default value for '*n*' is 40,000.}
 }
 \value{
 A data frame of points depicting a spatial grid of the hunting area
@@ -36,6 +39,10 @@ An implementation of the criminal geographic targeting model
      base.
 }
 \examples{
+\dontshow{
+data(desalvo)
+test <- cgt_profile(desalvo$lat, desalvo$lon, n = 4)
+}
 \donttest{
 #Using provided dataset for the Boston Strangler Incidents:
 data(desalvo)

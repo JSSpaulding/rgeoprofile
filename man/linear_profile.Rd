@@ -4,7 +4,7 @@
 \alias{linear_profile}
 \title{CrimeStat Linear Model for Geographic Profiling}
 \usage{
-linear_profile(lat, lon, a = NULL, b = NULL)
+linear_profile(lat, lon, a = NULL, b = NULL, n = NULL)
 }
 \arguments{
 \item{lat}{a vector of latitudes for the crime incident series}
@@ -16,6 +16,9 @@ If \code{NULL}, the default value for '*a*' is 1.9 (Levine 2013)}
 
 \item{b}{a constant for the distance decay function
 If \code{NULL}, the default value for '*b*' is -0.06 (Levine 2013)}
+
+\item{n}{total number of cells within the spatial grid for the jeopardy surface.
+If \code{NULL}, the default value for '*n*' is 40,000.}
 }
 \value{
 A data frame of points depicting a spatial grid of the hunting area
@@ -30,6 +33,10 @@ An implementation of the linear decay model for serial crime
     distance increases from the crime incidents.
 }
 \examples{
+\dontshow{
+data(desalvo)
+test <- linear_profile(desalvo$lat, desalvo$lon, n = 4)
+}
 \donttest{
 #Using provided dataset for the Boston Strangler Incidents:
 data(desalvo)

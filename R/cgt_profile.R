@@ -17,6 +17,8 @@
 #' @param g decay formula coefficient which changes the steepness of the decay
 #'     curve before the buffer radius. If \code{NULL}, the default value for '*g*'
 #'     is 1.2 as recommended by Rossmo (1995)
+#' @param n total number of cells within the spatial grid for the jeopardy surface.
+#'     If \code{NULL}, the default value for '*n*' is 40,000.
 #' @return A data frame of points depicting a spatial grid of the hunting area
 #'     for the given incident locations. Also given are the resultant summed
 #'     values (score) for each map point. A higher resultant score indicates
@@ -27,6 +29,10 @@
 #'     murderers.} Diss. Theses (School of Criminology)/Simon Fraser University.
 #' @keywords spatial methods
 #' @examples
+#' \dontshow{
+#' data(desalvo)
+#' test <- cgt_profile(desalvo$lat, desalvo$lon, n = 4)
+#' }
 #' \donttest{
 #' #Using provided dataset for the Boston Strangler Incidents:
 #' data(desalvo)
@@ -55,7 +61,7 @@
 #' @importFrom utils txtProgressBar
 #' @importFrom utils setTxtProgressBar
 #' @export
-cgt_profile <- function(lat, lon, buffer = NULL, f = NULL, g = NULL){
+cgt_profile <- function(lat, lon, buffer = NULL, f = NULL, g = NULL, n = NULL){
   # Set Defaults -----
   if (is.null(buffer)) {
     # Calculate Incident Buffer Zone -----
@@ -82,6 +88,7 @@ cgt_profile <- function(lat, lon, buffer = NULL, f = NULL, g = NULL){
   c <- length(lat)
   if (is.null(f)) {f <- 1.9} #default: Rossmo (1995)
   if (is.null(g)) {g <- 1.9} #default: Rossmo (1995)
+  if (is.null(n)) {n <- 40000} #default: Rossmo (1995)
 
   # Computation of Map Boundaries/ Hunting Area -----
   # Rossmo (2000)
@@ -95,8 +102,9 @@ cgt_profile <- function(lat, lon, buffer = NULL, f = NULL, g = NULL){
   lon_range <- lon_max - lon_min
 
   # Determine Sequence of Lat and Lon Gridlines -----
-  lats <- seq(lat_min,lat_max, length.out = 200)
-  lons <- seq(lon_min,lon_max, length.out = 200)
+  g_size <- sqrt(n)
+  lats <- seq(lat_min,lat_max, length.out = g_size)
+  lons <- seq(lon_min,lon_max, length.out = g_size)
 
   # Create a Run Sequence for Each Incident of Grid Points -----
   run_seq <- expand.grid(lats, lons)
@@ -107,7 +115,7 @@ cgt_profile <- function(lat, lon, buffer = NULL, f = NULL, g = NULL){
   phi <- NULL
   output <- data.frame()
   # Progress Bar
-  pb = utils::txtProgressBar(min = 0, max = length(lat) * 40000, style = 3)
+  pb = utils::txtProgressBar(min = 0, max = length(lat) * n, style = 3)
   tick <- 0
 
   for(i in 1:length(lat)){
@@ -138,3 +146,4 @@ cgt_profile <- function(lat, lon, buffer = NULL, f = NULL, g = NULL){
   dat <- cbind(sums, run_seq)
   return(dat)
 }
+

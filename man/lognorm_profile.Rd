@@ -19,6 +19,9 @@ value for 'a' is 8.6 (Levine 2013)}
 
 \item{sd}{standard deviation of the distances. If \code{NULL}, the default
 value for 'sd' is 4.6 (Levine 2013)}
+
+\item{n}{total number of cells within the spatial grid for the jeopardy surface.
+If \code{NULL}, the default value for '*n*' is 40,000.}
 }
 \value{
 A data frame of points depicting a spatial grid of the hunting area
@@ -35,6 +38,10 @@ An implementation of the lognormal decay model for serial crime
     from the peak likelihood.
 }
 \examples{
+\dontshow{
+data(desalvo)
+test <- lognorm_profile(desalvo$lat, desalvo$lon, n = 4)
+}
 \donttest{
 #Using provided dataset for the Boston Strangler Incidents:
 data(desalvo)
