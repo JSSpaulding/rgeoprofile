@@ -4,18 +4,25 @@
 \alias{trun_neg_exp_profile}
 \title{CrimeStat Truncated Negative Exponential Model for Geographic Profiling}
 \usage{
-trun_neg_exp_profile(lat, lon, dp = NULL, peak_lh = NULL, c = NULL)
+trun_neg_exp_profile(lat, lon, dp = NULL, peak_lh = NULL, c = NULL,
+  n = NULL)
 }
 \arguments{
 \item{lat}{a vector of latitudes for the crime incident series}
 
 \item{lon}{a vector of latitudes for the crime incident series}
 
-\item{dp}{radial distance for the peak likelihood (cutoff distance)}
+\item{dp}{radial distance for the peak likelihood (cutoff distance). If \code{NULL},
+the default value for 'dp' is 4.2 (Levine 2013)}
 
-\item{peak_lh}{peak likelihood for the distance decay function}
+\item{peak_lh}{peak likelihood for the distance decay function. If \code{NULL},
+the default value for 'peak_lh' is 13.8 (Levine 2013)}
 
-\item{c}{exponential constant for the negative exponential decay function}
+\item{c}{exponential constant for the negative exponential decay function. If
+\code{NULL}, the default value for 'c' is -0.06 (Levine 2013)}
+
+\item{n}{total number of cells within the spatial grid for the jeopardy surface.
+If \code{NULL}, the default value for '*n*' is 40,000.}
 }
 \value{
 A data frame of points depicting a spatial grid of the hunting area
@@ -25,7 +32,7 @@ A data frame of points depicting a spatial grid of the hunting area
 }
 \description{
 An implementation of the truncated negative exponential decay
-    model for serial crime analysis within CrimeStat. This is a joint function
+    model for serial crime analysis within 'CrimeStat'. This is a joint function
     composed of both the linear and the negative exponential. For distances
     proximal to the incidents, a positive linear function is defined from zero
     likelihood at distance zero to a location of peak likelihood. At the peak
@@ -33,6 +40,10 @@ An implementation of the truncated negative exponential decay
     declining as distance increases.
 }
 \examples{
+\dontshow{
+data(desalvo)
+test <- trun_neg_exp_profile(desalvo$lat, desalvo$lon, n = 4)
+}
 \donttest{
 #Using provided dataset for the Boston Strangler Incidents:
 data(desalvo)

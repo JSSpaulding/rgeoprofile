@@ -3,7 +3,7 @@
 
 #' CrimeStat Linear Model for Geographic Profiling
 #' @description An implementation of the linear decay model for serial crime
-#'     analysis within CrimeStat. This model assumes that the likelihood of
+#'     analysis within 'CrimeStat'. This model assumes that the likelihood of
 #'     the serial perpetrator's home base decreases in a linear fashion as the
 #'     distance increases from the crime incidents.
 #' @param lat a vector of latitudes for the crime incident series

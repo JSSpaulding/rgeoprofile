@@ -6,18 +6,18 @@
 #'     decay model for serial crime analysis. In this model, the decline is at
 #'     a constant rate, therefore the likelihood of the perpetrator's home base
 #'     drops quickly from the incident locations until it approaches zero
-#'     likelihood. The user can select different variants including the CrimeStat
-#'     base model, the Dragnet model, or whether a buffer and plateau is present
+#'     likelihood. The user can select different variants including the 'CrimeStat'
+#'     base model, the 'Dragnet' model, or whether a buffer and plateau is present
 #'     at the start of the decay function. This model assumes that the likelihood
 #'     of the serial perpetrator's home base decreases in a exponential fashion
 #'     as the distance increases from the crime incidents.
 #' @param lat a vector of latitudes for the crime incident series
 #' @param lon a vector of latitudes for the crime incident series
-#' @param method CrimeStat, Dragnet, or a custom parameter based negative exponential
-#'     decay function. If using the CrimeStat or Dragnet method, values do not
+#' @param method 'CrimeStat', 'Dragnet', or a custom parameter based negative exponential
+#'     decay function. If using the 'CrimeStat' or 'Dragnet' method, values do not
 #'     need to be provided from 'a' and 'b' as the default parameters will be
-#'     used. Default parameters for the CrimeStat are: \eqn{a = 1.89} \eqn{a = -0.06}.
-#'     Default parameters for the Dragnet are: \eqn{a = b = 1}. If using a custom
+#'     used. Default parameters for the 'CrimeStat' are: \eqn{a = 1.89} \eqn{a = -0.06}.
+#'     Default parameters for the 'Dragnet' are: \eqn{a = b = 1}. If using a custom
 #'     model, values must be provided for '*a*' and '*b*'.
 #' @param buffer TRUE/FALSE. Whether a buffer zone where a likelihood of zero
 #'     is fit around the incidents and a plateau of peak likelihood is fit prior

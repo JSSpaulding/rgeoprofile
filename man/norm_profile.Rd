@@ -4,7 +4,8 @@
 \alias{norm_profile}
 \title{CrimeStat Normal Model for Geographic Profiling}
 \usage{
-norm_profile(lat, lon, a = NULL, d_mean = NULL, sd = NULL)
+norm_profile(lat, lon, a = NULL, d_mean = NULL, sd = NULL,
+  n = NULL)
 }
 \arguments{
 \item{lat}{a vector of latitudes for the crime incident series}
@@ -19,6 +20,9 @@ value for 'a' is 29.5 (Levine 2013)}
 
 \item{sd}{standard deviation of the distances. If \code{NULL}, the default
 value for 'sd' is 4.6 (Levine 2013)}
+
+\item{n}{total number of cells within the spatial grid for the jeopardy surface.
+If \code{NULL}, the default value for '*n*' is 40,000.}
 }
 \value{
 A data frame of points depicting a spatial grid of the hunting area
@@ -28,13 +32,17 @@ A data frame of points depicting a spatial grid of the hunting area
 }
 \description{
 An implementation of the normal decay model for serial crime
-    analysis within CrimeStat. This model assumes that there is a peak
+    analysis within 'CrimeStat'. This model assumes that there is a peak
     likelihood of the serial perpetrator's home base at some optimal
     distance from the crime incidents. The function rises in likelihood to that
     distance and then declines at an equal rate (both prior to and after the
     peak likelhihood) giving the symetrical normal distribution.
 }
 \examples{
+\dontshow{
+data(desalvo)
+test <- norm_profile(desalvo$lat, desalvo$lon, n = 4)
+}
 \donttest{
 #Using provided dataset for the Boston Strangler Incidents:
 data(desalvo)

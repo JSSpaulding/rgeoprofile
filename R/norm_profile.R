@@ -3,7 +3,7 @@
 
 #' CrimeStat Normal Model for Geographic Profiling
 #' @description An implementation of the normal decay model for serial crime
-#'     analysis within CrimeStat. This model assumes that there is a peak
+#'     analysis within 'CrimeStat'. This model assumes that there is a peak
 #'     likelihood of the serial perpetrator's home base at some optimal
 #'     distance from the crime incidents. The function rises in likelihood to that
 #'     distance and then declines at an equal rate (both prior to and after the

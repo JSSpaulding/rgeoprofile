@@ -3,7 +3,7 @@
 
 #' CrimeStat Truncated Negative Exponential Model for Geographic Profiling
 #' @description An implementation of the truncated negative exponential decay
-#'     model for serial crime analysis within CrimeStat. This is a joint function
+#'     model for serial crime analysis within 'CrimeStat'. This is a joint function
 #'     composed of both the linear and the negative exponential. For distances
 #'     proximal to the incidents, a positive linear function is defined from zero
 #'     likelihood at distance zero to a location of peak likelihood. At the peak
@@ -11,9 +11,12 @@
 #'     declining as distance increases.
 #' @param lat a vector of latitudes for the crime incident series
 #' @param lon a vector of latitudes for the crime incident series
-#' @param dp radial distance for the peak likelihood (cutoff distance)
-#' @param peak_lh peak likelihood for the distance decay function
-#' @param c exponential constant for the negative exponential decay function
+#' @param dp radial distance for the peak likelihood (cutoff distance). If \code{NULL},
+#'     the default value for 'dp' is 4.2 (Levine 2013)
+#' @param peak_lh peak likelihood for the distance decay function. If \code{NULL},
+#'     the default value for 'peak_lh' is 13.8 (Levine 2013)
+#' @param c exponential constant for the negative exponential decay function. If
+#'     \code{NULL}, the default value for 'c' is -0.06 (Levine 2013)
 #' @param n total number of cells within the spatial grid for the jeopardy surface.
 #'     If \code{NULL}, the default value for '*n*' is 40,000.
 #' @return A data frame of points depicting a spatial grid of the hunting area

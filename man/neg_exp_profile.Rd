@@ -5,18 +5,18 @@
 \title{Negative Exponential Model for Geographic Profiling}
 \usage{
 neg_exp_profile(lat, lon, method = c("CrimeStat", "Dragnet", "Custom"),
-  buffer = FALSE, a = NULL, b = NULL)
+  buffer = FALSE, a = NULL, b = NULL, n = NULL)
 }
 \arguments{
 \item{lat}{a vector of latitudes for the crime incident series}
 
 \item{lon}{a vector of latitudes for the crime incident series}
 
-\item{method}{CrimeStat, Dragnet, or a custom parameter based negative exponential
-decay function. If using the CrimeStat or Dragnet method, values do not
+\item{method}{'CrimeStat', 'Dragnet', or a custom parameter based negative exponential
+decay function. If using the 'CrimeStat' or 'Dragnet' method, values do not
 need to be provided from 'a' and 'b' as the default parameters will be
-used. Default parameters for the CrimeStat are: \eqn{a = 1.89} \eqn{a = -0.06}.
-Default parameters for the Dragnet are: \eqn{a = b = 1}. If using a custom
+used. Default parameters for the 'CrimeStat' are: \eqn{a = 1.89} \eqn{a = -0.06}.
+Default parameters for the 'Dragnet' are: \eqn{a = b = 1}. If using a custom
 model, values must be provided for '*a*' and '*b*'.}
 
 \item{buffer}{TRUE/FALSE. Whether a buffer zone where a likelihood of zero
@@ -28,6 +28,9 @@ distance.}
 \item{a}{the slope coefficient which defines the function decrease in distance}
 
 \item{b}{exponential multiplier for the distance decay function}
+
+\item{n}{total number of cells within the spatial grid for the jeopardy surface.
+If \code{NULL}, the default value for '*n*' is 40,000.}
 }
 \value{
 A data frame of points depicting a spatial grid of the hunting area
@@ -40,13 +43,17 @@ An implementation of variations of the negative exponential
     decay model for serial crime analysis. In this model, the decline is at
     a constant rate, therefore the likelihood of the perpetrator's home base
     drops quickly from the incident locations until it approaches zero
-    likelihood. The user can select different variants including the CrimeStat
-    base model, the Dragnet model, or whether a buffer and plateau is present
+    likelihood. The user can select different variants including the 'CrimeStat'
+    base model, the 'Dragnet' model, or whether a buffer and plateau is present
     at the start of the decay function. This model assumes that the likelihood
     of the serial perpetrator's home base decreases in a exponential fashion
     as the distance increases from the crime incidents.
 }
 \examples{
+\dontshow{
+data(desalvo)
+test <- neg_exp_profile(desalvo$lat, desalvo$lon, method = "CrimeStat", n = 4)
+}
 \donttest{
 #Using provided dataset for the Boston Strangler Incidents:
 data(desalvo)

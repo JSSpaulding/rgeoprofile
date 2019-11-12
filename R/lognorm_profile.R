@@ -3,7 +3,7 @@
 
 #' CrimeStat Lognormal Model for Geographic Profiling
 #' @description An implementation of the lognormal decay model for serial crime
-#'     analysis within CrimeStat. This model is very similar to the normal model
+#'     analysis within 'CrimeStat'. This model is very similar to the normal model
 #'     except with more skew to either side. If there is reason to believe that
 #'     the perpetrator's residence is closer to the incidents, this function can
 #'     take the form of a very rapid increase near incident with a gradual decline

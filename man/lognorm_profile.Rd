@@ -4,7 +4,8 @@
 \alias{lognorm_profile}
 \title{CrimeStat Lognormal Model for Geographic Profiling}
 \usage{
-lognorm_profile(lat, lon, a = NULL, d_mean = NULL, sd = NULL)
+lognorm_profile(lat, lon, a = NULL, d_mean = NULL, sd = NULL,
+  n = NULL)
 }
 \arguments{
 \item{lat}{a vector of latitudes for the crime incident series}
@@ -31,7 +32,7 @@ A data frame of points depicting a spatial grid of the hunting area
 }
 \description{
 An implementation of the lognormal decay model for serial crime
-    analysis within CrimeStat. This model is very similar to the normal model
+    analysis within 'CrimeStat'. This model is very similar to the normal model
     except with more skew to either side. If there is reason to believe that
     the perpetrator's residence is closer to the incidents, this function can
     take the form of a very rapid increase near incident with a gradual decline
