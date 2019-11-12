@@ -23,11 +23,9 @@ A calculation of the center of minimum distance for serial crime
     perpetrator's home base is relatively central among the crime incidents.
 }
 \examples{
-\donttest{
 #Using provided dataset for the Boston Strangler Incidents:
-desalvo <- data.frame(rgeoprofile:::boston_strangler)
+data(desalvo)
 cmd_pred(desalvo$lat, desalvo$lon)
-}
 }
 \author{
 Jamie Spaulding, Keith Morris

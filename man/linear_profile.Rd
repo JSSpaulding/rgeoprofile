@@ -32,7 +32,7 @@ An implementation of the linear decay model for serial crime
 \examples{
 \donttest{
 #Using provided dataset for the Boston Strangler Incidents:
-desalvo <- data.frame(rgeoprofile:::boston_strangler)
+data(desalvo)
 test <- linear_profile(desalvo$lat, desalvo$lon)
 g_map = sp::SpatialPixelsDataFrame(points = test[c("lons", "lats")], data = test)
 g_map <- raster::raster(g_map)

@@ -15,7 +15,7 @@
 #' @keywords spatial methods
 #' @examples
 #' #Using provided dataset for the Boston Strangler Incidents:
-#' desalvo <- data.frame(rgeoprofile:::boston_strangler)
+#' data(desalvo)
 #' cmd_pred(desalvo$lat, desalvo$lon)
 #' @importFrom aspace distances
 #' @importFrom grDevices chull

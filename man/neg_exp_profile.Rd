@@ -49,7 +49,7 @@ An implementation of variations of the negative exponential
 \examples{
 \donttest{
 #Using provided dataset for the Boston Strangler Incidents:
-desalvo <- data.frame(rgeoprofile:::boston_strangler)
+data(desalvo)
 test <- neg_exp_profile(desalvo$lat, desalvo$lon, method = "CrimeStat")
 g_map = sp::SpatialPixelsDataFrame(points = test[c("lons", "lats")], data = test)
 g_map <- raster::raster(g_map)
