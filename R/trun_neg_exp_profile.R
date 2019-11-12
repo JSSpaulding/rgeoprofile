@@ -14,6 +14,8 @@
 #' @param dp radial distance for the peak likelihood (cutoff distance)
 #' @param peak_lh peak likelihood for the distance decay function
 #' @param c exponential constant for the negative exponential decay function
+#' @param n total number of cells within the spatial grid for the jeopardy surface.
+#'     If \code{NULL}, the default value for '*n*' is 40,000.
 #' @return A data frame of points depicting a spatial grid of the hunting area
 #'     for the given incident locations. Also given are the resultant summed
 #'     values (score) for each map point. A higher resultant score indicates
@@ -24,6 +26,10 @@
 #'     Houston, TX, and the National Institute of Justice, Washington, DC, June 2013.
 #' @keywords spatial methods
 #' @examples
+#' \dontshow{
+#' data(desalvo)
+#' test <- trun_neg_exp_profile(desalvo$lat, desalvo$lon, n = 4)
+#' }
 #' \donttest{
 #' #Using provided dataset for the Boston Strangler Incidents:
 #' data(desalvo)
@@ -52,11 +58,12 @@
 #' @importFrom utils txtProgressBar
 #' @importFrom utils setTxtProgressBar
 #' @export
-trun_neg_exp_profile <- function(lat, lon, dp = NULL, peak_lh = NULL, c = NULL){
+trun_neg_exp_profile <- function(lat, lon, dp = NULL, peak_lh = NULL, c = NULL, n = NULL){
   # Set Defaults -----
   if (is.null(dp)) {dp <- 0.4} #default: Levine (2013)
   if (is.null(peak_lh)) {peak_lh <- 13.8} #default: Levine (2013)
   if (is.null(c)) {c <- -0.06} #default: Levine (2013)
+  if (is.null(n)) {n <- 40000}
   B <- (peak_lh / dp) #slope of linear function (origin -> cutoff)
 
   # Computation of Map Boundaries/ Hunting Area -----
@@ -70,8 +77,9 @@ trun_neg_exp_profile <- function(lat, lon, dp = NULL, peak_lh = NULL, c = NULL){
   lon_range <- lon_max - lon_min
 
   # Determine Sequence of Lat and Lon Gridlines -----
-  lats <- seq(lat_min,lat_max, length.out = 200)
-  lons <- seq(lon_min,lon_max, length.out = 200)
+  g_size <- sqrt(n)
+  lats <- seq(lat_min,lat_max, length.out = g_size)
+  lons <- seq(lon_min,lon_max, length.out = g_size)
 
   # Create a Run Sequence for Each Incident of Grid Points -----
   run_seq <- expand.grid(lats, lons)
@@ -81,7 +89,7 @@ trun_neg_exp_profile <- function(lat, lon, dp = NULL, peak_lh = NULL, c = NULL){
   jj <- 1
   output <- data.frame()
   # PROGRESS BAR FOR LOOP
-  pb = utils::txtProgressBar(min = 0, max = length(lat) * 40000, style = 3)
+  pb = utils::txtProgressBar(min = 0, max = length(lat) * n, style = 3)
   tick <- 0
 
   for(i in 1:length(lat)){

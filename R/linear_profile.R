@@ -59,7 +59,7 @@ linear_profile <- function(lat, lon, a = NULL, b = NULL, n = NULL){
   # Set Defaults -----
   if (is.null(a)) {a <- 1.9} #default: Levine (2013)
   if (is.null(b)) {b <- -0.06} #default: Levine (2013)
-  if (is.null(n)) {b <- 40000}
+  if (is.null(n)) {n <- 40000}
 
   # Computation of Map Boundaries/ Hunting Area -----
   lat_max <- max(lat) + ((max(lat) - min(lat)) / (2 * (length(lat) - 1)))

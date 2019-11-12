@@ -30,6 +30,8 @@
 #'     for the given incident locations. Also given are the resultant summed
 #'     values (score) for each map point. A higher resultant score indicates
 #'     a greater the probability that point contains the offender's anchor point.
+#' @param n total number of cells within the spatial grid for the jeopardy surface.
+#'     If \code{NULL}, the default value for '*n*' is 40,000.
 #' @author Jamie Spaulding, Keith Morris
 #' @references Ned Levine, \emph{CrimeStat IV: A Spatial Statistics Program for the
 #'     Analysis of Crime Incident Locations (version 4.0)}. Ned Levine & Associates,
@@ -39,6 +41,10 @@
 #'     quantitative criminology, 16(4), 457-478.
 #' @keywords spatial methods
 #' @examples
+#' \dontshow{
+#' data(desalvo)
+#' test <- neg_exp_profile(desalvo$lat, desalvo$lon, method = "CrimeStat", n = 4)
+#' }
 #' \donttest{
 #' #Using provided dataset for the Boston Strangler Incidents:
 #' data(desalvo)
@@ -68,7 +74,7 @@
 #' @importFrom utils setTxtProgressBar
 #' @export
 neg_exp_profile <- function(lat, lon, method = c("CrimeStat", "Dragnet", "Custom"),
-                            buffer = FALSE, a = NULL, b = NULL){
+                            buffer = FALSE, a = NULL, b = NULL, n = NULL){
   # Set Defaults -----
   if (method == "Custom" & is.null(a)) {
     stop("If using a custom model, both 'a' and 'b' must be specified")
@@ -84,6 +90,7 @@ neg_exp_profile <- function(lat, lon, method = c("CrimeStat", "Dragnet", "Custom
     a <- 1
     b <- -1
   } #Canter et al. (2000)
+  if (is.null(n)) {n <- 40000}
 
   # Computation of Map Boundaries/ Hunting Area -----
   lat_max <- max(lat) + ((max(lat) - min(lat)) / (2 * (length(lat) - 1)))
@@ -96,8 +103,9 @@ neg_exp_profile <- function(lat, lon, method = c("CrimeStat", "Dragnet", "Custom
   lon_range <- lon_max - lon_min
 
   # Determine Sequence of Lat and Lon Gridlines -----
-  lats <- seq(lat_min,lat_max, length.out = 200)
-  lons <- seq(lon_min,lon_max, length.out = 200)
+  g_size <- sqrt(n)
+  lats <- seq(lat_min,lat_max, length.out = g_size)
+  lons <- seq(lon_min,lon_max, length.out = g_size)
 
   # Create a Run Sequence for Each Incident of Grid Points -----
   run_seq <- expand.grid(lats, lons)
@@ -126,7 +134,7 @@ neg_exp_profile <- function(lat, lon, method = c("CrimeStat", "Dragnet", "Custom
     jj <- 1
     output <- data.frame()
     # Progress Bar
-    pb = utils::txtProgressBar(min = 0, max = length(lat) * 40000, style = 3)
+    pb = utils::txtProgressBar(min = 0, max = length(lat) * n, style = 3)
     tick <- 0
 
     for(i in 1:length(lat)){
@@ -151,7 +159,7 @@ neg_exp_profile <- function(lat, lon, method = c("CrimeStat", "Dragnet", "Custom
     } else{
     jj <- 1
     output <- data.frame()
-    pb = txtProgressBar(min = 0, max = length(lat)*40000, style = 3)
+    pb = txtProgressBar(min = 0, max = length(lat) * n, style = 3)
     tick <- 0
 
     for(i in 1:length(lat)){

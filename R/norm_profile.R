@@ -16,6 +16,8 @@
 #'     4.2 (Levine 2013)
 #' @param sd standard deviation of the distances. If \code{NULL}, the default
 #'     value for 'sd' is 4.6 (Levine 2013)
+#' @param n total number of cells within the spatial grid for the jeopardy surface.
+#'     If \code{NULL}, the default value for '*n*' is 40,000.
 #' @return A data frame of points depicting a spatial grid of the hunting area
 #'     for the given incident locations. Also given are the resultant summed
 #'     values (score) for each map point. A higher resultant score indicates
@@ -26,6 +28,10 @@
 #'     Houston, TX, and the National Institute of Justice, Washington, DC, June 2013.
 #' @keywords spatial methods
 #' @examples
+#' \dontshow{
+#' data(desalvo)
+#' test <- norm_profile(desalvo$lat, desalvo$lon, n = 4)
+#' }
 #' \donttest{
 #' #Using provided dataset for the Boston Strangler Incidents:
 #' data(desalvo)
@@ -54,11 +60,12 @@
 #' @importFrom utils txtProgressBar
 #' @importFrom utils setTxtProgressBar
 #' @export
-norm_profile <- function(lat, lon, a = NULL, d_mean = NULL, sd = NULL){
+norm_profile <- function(lat, lon, a = NULL, d_mean = NULL, sd = NULL, n = NULL){
   # Set Defaults -----
   if (is.null(a)) {a <- 29.5} #default: Levine (2013)
   if (is.null(d_mean)) {d_mean <- 4.2} #default: Levine (2013)
   if (is.null(sd)) {sd <- 4.6} #default: Levine (2013)
+  if (is.null(n)) {n <- 40000}
 
   # Computation of Map Boundaries/ Hunting Area -----
   lat_max <- max(lat) + ((max(lat) - min(lat)) / (2 * (length(lat) - 1)))
@@ -71,8 +78,9 @@ norm_profile <- function(lat, lon, a = NULL, d_mean = NULL, sd = NULL){
   lon_range <- lon_max - lon_min
 
   # Determine Sequence of Lat and Lon Gridlines -----
-  lats <- seq(lat_min,lat_max, length.out = 200)
-  lons <- seq(lon_min,lon_max, length.out = 200)
+  g_size <- sqrt(n)
+  lats <- seq(lat_min,lat_max, length.out = g_size)
+  lons <- seq(lon_min,lon_max, length.out = g_size)
 
   # Create a Run Sequence for Each Incident of Grid Points -----
   run_seq <- expand.grid(lats, lons)
@@ -82,7 +90,7 @@ norm_profile <- function(lat, lon, a = NULL, d_mean = NULL, sd = NULL){
   jj <- 1
   output <- data.frame()
   # PROGRESS BAR FOR LOOP
-  pb = utils::txtProgressBar(min = 0, max = length(lat) * 40000, style = 3)
+  pb = utils::txtProgressBar(min = 0, max = length(lat) * n, style = 3)
   tick <- 0
 
   for(i in 1:length(lat)){

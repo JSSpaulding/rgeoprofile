@@ -60,12 +60,12 @@
 #' @importFrom utils txtProgressBar
 #' @importFrom utils setTxtProgressBar
 #' @export
-lognorm_profile <- function(lat, lon, a = NULL, d_mean = NULL, sd = NULL){
+lognorm_profile <- function(lat, lon, a = NULL, d_mean = NULL, sd = NULL, n = NULL){
   # Set Defaults -----
   if (is.null(a)) {a <- 8.6} #default: Levine (2013)
   if (is.null(d_mean)) {d_mean <- 4.2} #default: Levine (2013)
   if (is.null(sd)) {sd <- 4.6} #default: Levine (2013)
-  if (is.null(n)) {b <- 40000}
+  if (is.null(n)) {n <- 40000}
 
   # Computation of Map Boundaries/ Hunting Area -----
   lat_max <- max(lat) + ((max(lat) - min(lat)) / (2 * (length(lat) - 1)))
