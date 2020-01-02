@@ -56,7 +56,6 @@
 #'         fillColor = "red")
 #' }
 #' @importFrom geosphere distHaversine
-#' @importFrom RANN.L1 nn2
 #' @importFrom utils txtProgressBar
 #' @importFrom utils setTxtProgressBar
 #' @export
