@@ -25,7 +25,7 @@ Imports:
     grDevices,
     leaflet,
     pals,
-    RANN.L1, 
+    RANN, 
     raster,
     sp,
     splancs,

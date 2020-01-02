@@ -69,7 +69,7 @@
 #'         fillColor = "red")
 #' }
 #' @importFrom geosphere distHaversine
-#' @importFrom RANN.L1 nn2
+#' @importFrom RANN nn2
 #' @importFrom utils txtProgressBar
 #' @importFrom utils setTxtProgressBar
 #' @export
@@ -114,7 +114,7 @@ neg_exp_profile <- function(lat, lon, method = c("CrimeStat", "Dragnet", "Custom
   if (buffer == TRUE) {
     # Calculate Incident Buffer Zone -----
     dat_nn <- cbind(lat,lon) # Extract only lat and lon columns
-    nn_list <- RANN.L1::nn2(dat_nn, dat_nn, k=2) # Find NNs
+    nn_list <- RANN::nn2(dat_nn, dat_nn, k=2) # Find NNs
     nn <- nn_list$nn.idx # Extract NN pairs
 
     # Calculate Distances Between NN Pairs -----
