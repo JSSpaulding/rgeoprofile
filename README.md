@@ -3,7 +3,7 @@
 <!-- badges: start -->
 ![CRAN Version](https://www.r-pkg.org/badges/version-ago/rgeoprofile)
 ![CRAN Downloads](https://cranlogs.r-pkg.org/badges/last-month/rgeoprofile)
-![Build Status](https://travis-ci.org/JSSpaulding/rgeoprofile.svg?branch=master)](https://travis-ci.org/JSSpaulding/rgeoprofile)
+![Build Status](https://travis-ci.org/JSSpaulding/rgeoprofile)
 <!-- badges: end -->
 
 ## Overview
