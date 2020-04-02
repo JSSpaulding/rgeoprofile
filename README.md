@@ -1,4 +1,4 @@
-# rgeoprofile: Geographic Profiling Methods for Serial Crime Analysis <a><img src='../master/images/Rossmo_ddf.png' align="right" height="139" /></a>
+# rgeoprofile: Geographic Profiling Methods for Serial Crime Analysis <a><img src='../master/images/rgeoprofile-hex.png' align="right" height="139" /></a>
 
 <!-- badges: start -->
 ![CRAN Version](https://www.r-pkg.org/badges/version-ago/rgeoprofile)
