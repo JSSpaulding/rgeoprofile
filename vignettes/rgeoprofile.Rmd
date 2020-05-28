@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 library(rgeoprofile)
 library(leaflet)
 require(leafsync)
-load("vignette_maps.RData")
+load("vignette_results.RData")
 ```
 
 The *rgeoprofile* package is designed for the analysis of serial crime incidents by policing and security agencies using various methods of geographic profiling. Geographic profiling is a technique used to predict the location of an offender's residence or anchor point given information regarding crime locations. Current methods for prediction of offender residence draw from theoretical approaches in psychology, criminology, and geography. The package was contributed to provide a viable open source platform consisting of several solutions which have been proposed, developed, and utilized to model and assess the potential residence of an offender given their serial incidents. The package includes methods for both centrographic point predictions (spatial distribution strategies) and distance decay functions (probability distance strategies).
@@ -113,7 +113,7 @@ cgt <- cgt_profile(desalvo$lat, desalvo$lon)
 
 The results of the function are a data frame with the resultant sum and the coordinates of the cell within the grid. The following code can be used to map the resultant geographic profile/jeopardy surface in an interactive `leaflet` map widget, where the incidents are given by a black dot and the true residence of Albert DeSalvo is given by a green 'house' marker:
 
-```{r, eval=FALSE}
+```{r}
 # Code to map resultant geographic profile
 g_map = sp::SpatialPixelsDataFrame(points = cgt[c("lons", "lats")], data = cgt)
 g_map <- raster::raster(g_map)
@@ -127,7 +127,7 @@ pal <- colorNumeric(pals::parula(200), raster::values(g_map),
                     na.color = "transparent")
 
 # Map 
-cgt_map <- leaflet() %>%
+cgt_map <- leaflet(width = "100%") %>%
   addProviderTiles('Esri.WorldTopoMap', group = 'Topo') %>%
   addAwesomeMarkers(lng = -71.07357, lat = 42.41322, icon = awesomeIcons(
     icon = 'home', markerColor = 'green'), popup = 'Residence') %>%
@@ -189,7 +189,8 @@ ne_1 <- neg_exp_profile(desalvo$lat, desalvo$lon, method = "CrimeStat")
 ne_2 <- neg_exp_profile(desalvo$lat, desalvo$lon, method = "Dragnet")
 #Dragnet Neg. Exp. with Buffer Zone
 ne_3 <- neg_exp_profile(desalvo$lat, desalvo$lon, method = "Dragnet", buffer = TRUE)
-
+```
+```{r}
 ## Maps of Boston Strangler negative exponential geographic profiles
 g_map1 = sp::SpatialPixelsDataFrame(points = ne_1[c("lons", "lats")], data = ne_1)
 g_map1 <- raster::raster(g_map1)
@@ -204,7 +205,6 @@ raster::crs(g_map2) <- sp::CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs
 raster::crs(g_map3) <- sp::CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
 
 # Define a Parula Color Pallete for Resultant Jeopardy Surface
-library(leaflet) #for mapping the geographic profile
 pal1 <- colorNumeric(pals::parula(200), raster::values(g_map1),
                     na.color = "transparent")
 pal2 <- colorNumeric(pals::parula(200), raster::values(g_map2),
@@ -240,8 +240,8 @@ ne_dbuffer_map <- leaflet() %>%
   addCircleMarkers(lng = desalvo$lon, lat = desalvo$lat, radius = 4, opacity = 1,
                    stroke = FALSE, fillOpacity = 0.75, weight = 2,
                    fillColor = "black")
-```
-```{r}				   
+
+# Multi-plot of Negative Exponential Maps				   
 library(leafsync)
 leafsync::latticeView(ne_crimestat_map, ne_dragnet_map, ne_dbuffer_map,
                       sync = "all")
@@ -265,8 +265,31 @@ d_{i,j}     &= \text{Euclidean distance from cell}\ ij\ \text{to incident}\ ij
 \end{aligned}$$
 
 ```{r, eval=FALSE}
-lp <- linear_profile(desalvo$lat, desalvo$lon)
+linear <- linear_profile(desalvo$lat, desalvo$lon)
 ## Follow the mapping method under the `cgt_profile()` function
+```
+```{r, include=FALSE}
+# Code to map resultant geographic profile
+g_map = sp::SpatialPixelsDataFrame(points = linear[c("lons", "lats")], data = linear)
+g_map <- raster::raster(g_map)
+
+# Assign a Coordinate Reference System for the Raster
+raster::crs(g_map) <- sp::CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+
+# Define a Parula Color Pallete for Resultant Jeopardy Surface
+pal <- colorNumeric(pals::parula(200), raster::values(g_map),
+                    na.color = "transparent")
+
+# Map 
+linear_map <- leaflet(width = "100%") %>%
+  addProviderTiles('Esri.WorldTopoMap', group = 'Topo') %>%
+  addAwesomeMarkers(lng = -71.07357, lat = 42.41322, icon = awesomeIcons(
+    icon = 'home', markerColor = 'green'), popup = 'Residence') %>%
+  addRasterImage(g_map, colors = pal, opacity = 0.6) %>%
+  addLegend(pal = pal, values = raster::values(g_map), title = 'Score') %>%
+  addCircleMarkers(lng = desalvo$lon, lat = desalvo$lat, radius = 4, opacity = 1,
+                   stroke = FALSE, fillOpacity = 0.75, weight = 2,
+                   fillColor = "black")
 ```
 ```{r}
 ## Map of Boston Strangler linear geographic profile
@@ -288,8 +311,31 @@ S           &= \text{standard deviation of distance} = 4.6
 \end{aligned}$$
 
 ```{r, eval=FALSE}
-lognorm_profile(desalvo$lat, desalvo$lon)
+lognorm <- lognorm_profile(desalvo$lat, desalvo$lon)
 ## Follow the mapping method under the `cgt_profile()` function
+```
+```{r, include=FALSE}
+# Code to map resultant geographic profile
+g_map = sp::SpatialPixelsDataFrame(points = lognorm[c("lons", "lats")], data = lognorm)
+g_map <- raster::raster(g_map)
+
+# Assign a Coordinate Reference System for the Raster
+raster::crs(g_map) <- sp::CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+
+# Define a Parula Color Pallete for Resultant Jeopardy Surface
+pal <- colorNumeric(pals::parula(200), raster::values(g_map),
+                    na.color = "transparent")
+
+# Map 
+lognorm_map <- leaflet(width = "100%") %>%
+  addProviderTiles('Esri.WorldTopoMap', group = 'Topo') %>%
+  addAwesomeMarkers(lng = -71.07357, lat = 42.41322, icon = awesomeIcons(
+    icon = 'home', markerColor = 'green'), popup = 'Residence') %>%
+  addRasterImage(g_map, colors = pal, opacity = 0.6) %>%
+  addLegend(pal = pal, values = raster::values(g_map), title = 'Score') %>%
+  addCircleMarkers(lng = desalvo$lon, lat = desalvo$lat, radius = 4, opacity = 1,
+                   stroke = FALSE, fillOpacity = 0.75, weight = 2,
+                   fillColor = "black")
 ```
 ```{r}
 ## Map of Boston Strangler lognormal geographic profile
@@ -312,8 +358,31 @@ S           &= \text{standard deviation of distance} = 4.6
 \end{aligned}$$
 
 ```{r, eval=FALSE}
-norm_profile(desalvo$lat, desalvo$lon)
+normal <- norm_profile(desalvo$lat, desalvo$lon)
 ## Follow the mapping method under the `cgt_profile()` function
+```
+```{r, include=FALSE}
+# Code to map resultant geographic profile
+g_map = sp::SpatialPixelsDataFrame(points = normal[c("lons", "lats")], data = normal)
+g_map <- raster::raster(g_map)
+
+# Assign a Coordinate Reference System for the Raster
+raster::crs(g_map) <- sp::CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+
+# Define a Parula Color Pallete for Resultant Jeopardy Surface
+pal <- colorNumeric(pals::parula(200), raster::values(g_map),
+                    na.color = "transparent")
+
+# Map 
+norm_map <- leaflet(width = "100%") %>%
+  addProviderTiles('Esri.WorldTopoMap', group = 'Topo') %>%
+  addAwesomeMarkers(lng = -71.07357, lat = 42.41322, icon = awesomeIcons(
+    icon = 'home', markerColor = 'green'), popup = 'Residence') %>%
+  addRasterImage(g_map, colors = pal, opacity = 0.6) %>%
+  addLegend(pal = pal, values = raster::values(g_map), title = 'Score') %>%
+  addCircleMarkers(lng = desalvo$lon, lat = desalvo$lat, radius = 4, opacity = 1,
+                   stroke = FALSE, fillOpacity = 0.75, weight = 2,
+                   fillColor = "black")
 ```
 ```{r}
 ## Map of Boston Strangler normal geographic profile
@@ -339,8 +408,31 @@ d_{p}       &= \text{distance of peak likelihood (Cutoff Value)} = 0.4
 \end{aligned}$$
 
 ```{r, eval=FALSE}
-trun_neg_exp_profile(desalvo$lat, desalvo$lon)
+tne <- trun_neg_exp_profile(desalvo$lat, desalvo$lon)
 ## Follow the mapping method under the `cgt_profile()` function
+```
+```{r, include=FALSE}
+# Code to map resultant geographic profile
+g_map = sp::SpatialPixelsDataFrame(points = tne[c("lons", "lats")], data = tne)
+g_map <- raster::raster(g_map)
+
+# Assign a Coordinate Reference System for the Raster
+raster::crs(g_map) <- sp::CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+
+# Define a Parula Color Pallete for Resultant Jeopardy Surface
+pal <- colorNumeric(pals::parula(200), raster::values(g_map),
+                    na.color = "transparent")
+
+# Map 
+tne_map <- leaflet(width = "100%") %>%
+  addProviderTiles('Esri.WorldTopoMap', group = 'Topo') %>%
+  addAwesomeMarkers(lng = -71.07357, lat = 42.41322, icon = awesomeIcons(
+    icon = 'home', markerColor = 'green'), popup = 'Residence') %>%
+  addRasterImage(g_map, colors = pal, opacity = 0.6) %>%
+  addLegend(pal = pal, values = raster::values(g_map), title = 'Score') %>%
+  addCircleMarkers(lng = desalvo$lon, lat = desalvo$lat, radius = 4, opacity = 1,
+                   stroke = FALSE, fillOpacity = 0.75, weight = 2,
+                   fillColor = "black")
 ```
 ```{r}
 ## Map of Boston Strangler truncated negative exponential geographic profile
@@ -404,8 +496,6 @@ bs_med <- data.frame(lat = median(desalvo$lat),
 
 Finally, all of these centrographic predictions are plotted relative to the residence of Albert DeSalvo for comparison purposes.
 ```{r}
-# Note that the mean, geometric mean, and harmonic mean are so close the points appear as overlapping
-library(leaflet)
 leaflet(width = "100%") %>%
   addProviderTiles('Esri.WorldTopoMap', group = 'Topo') %>%
   addAwesomeMarkers(lng = -71.07357, lat = 42.41322, icon = awesomeIcons(

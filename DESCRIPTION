@@ -35,5 +35,6 @@ Suggests:
     htmlwidgets,
     leafsync,
     knitr,
+    rgdal,
     rmarkdown
 VignetteBuilder: knitr
