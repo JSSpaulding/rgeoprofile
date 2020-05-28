@@ -4,8 +4,7 @@
 \alias{trun_neg_exp_profile}
 \title{CrimeStat Truncated Negative Exponential Model for Geographic Profiling}
 \usage{
-trun_neg_exp_profile(lat, lon, dp = NULL, peak_lh = NULL, c = NULL,
-  n = NULL)
+trun_neg_exp_profile(lat, lon, dp = NULL, peak_lh = NULL, c = NULL, n = NULL)
 }
 \arguments{
 \item{lat}{a vector of latitudes for the crime incident series}
@@ -63,7 +62,7 @@ leaflet() \%>\%
         awesomeIcons(icon = 'home', markerColor = 'green'), popup = 'Residence') \%>\%
     addRasterImage(g_map, colors = pal, opacity = 0.6) \%>\%
     addLegend(pal = pal, values = raster::values(g_map), title = 'Score') \%>\%
-    addCircleMarkers(lng = data$lon, lat = data$lat, radius = 4, opacity = 1,
+    addCircleMarkers(lng = desalvo$lon, lat = desalvo$lat, radius = 4, opacity = 1,
         fill = 'black', stroke = TRUE, fillOpacity = 0.75, weight = 2,
         fillColor = "red")
 }

@@ -4,8 +4,7 @@
 \alias{norm_profile}
 \title{CrimeStat Normal Model for Geographic Profiling}
 \usage{
-norm_profile(lat, lon, a = NULL, d_mean = NULL, sd = NULL,
-  n = NULL)
+norm_profile(lat, lon, a = NULL, d_mean = NULL, sd = NULL, n = NULL)
 }
 \arguments{
 \item{lat}{a vector of latitudes for the crime incident series}
@@ -62,7 +61,7 @@ leaflet() \%>\%
         awesomeIcons(icon = 'home', markerColor = 'green'), popup = 'Residence') \%>\%
     addRasterImage(g_map, colors = pal, opacity = 0.6) \%>\%
     addLegend(pal = pal, values = raster::values(g_map), title = 'Score') \%>\%
-    addCircleMarkers(lng = data$lon, lat = data$lat, radius = 4, opacity = 1,
+    addCircleMarkers(lng = desalvo$lon, lat = desalvo$lat, radius = 4, opacity = 1,
         fill = 'black', stroke = TRUE, fillOpacity = 0.75, weight = 2,
         fillColor = "red")
 }
