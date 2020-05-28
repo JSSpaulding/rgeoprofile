@@ -76,7 +76,7 @@ There are six functions which utilize a distance decay methodology to develop a 
     * Higher scores indicate greater probability of offender’s home
 
 The following provides an illustration of the steps in the method:
-<a><img src='figures/ddf-method.png' align="center" width="675" /></a>
+<a><img src='figures/ddf-method.jpg' align="center" width="675" /></a>
 
 
 ## The `cgt_profile()` function
