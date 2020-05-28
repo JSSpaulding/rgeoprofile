@@ -13,7 +13,7 @@ authors:
 affiliations:
 - name: Department of Forensic and Investigative Science, West Virginia University, Morgantown, WV, USA
   index: 1
-date: "16 April 2020"
+date: "28 May 2020"
 bibliography: rgeoprofile-ref.bib
  
 ---
@@ -28,7 +28,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Package Functionality
 
-The rgeoprofile package contains a sample dataset `desalvo`[^1]  which contains information from the Boston Strangler serial incidents, attributed to Albert DeSalvo. In addition, the package is also comprised of nine functions: six which utilize a distance decay methodology, and three which are centrographic point predictions.
+The rgeoprofile package contains a sample dataset `desalvo`[^1]  which contains information from the Boston Strangler serial incidents, attributed to Albert DeSalvo. In addition, the package is also comprised of ten functions: six which utilize a distance decay methodology, and four which are centrographic point predictions.
 
 * `cgt_profile`: the CGT model developed by DK Rossmo [-@Rossmo:1995; -@Rossmo:1999]. This model utilizes Manhattan distance for the calculations and assumes the presence of a buffer zone around the incidents.
 * `linear_profile`: calculation of geographic profile using a linear decay function from each incident.
@@ -36,6 +36,7 @@ The rgeoprofile package contains a sample dataset `desalvo`[^1]  which contains 
 * `neg_exp_profile`: calculation of geographic profile using a negative exponential decay from each incident. The user can select different variants (in the default parameters) including the 'CrimeStat' base model [@Levine:2013], the 'Dragnet' model [@Canter:2000], or whether a buffer and plateau is present at the start of the decay function.
 * `norm_profile`: calculation of geographic profile using a normal decay function from each incident.
 * `trun_neg_exp_profile`: calculation of geographic profile using a truncated negative exponential decay from each incident. A joint function is utilized which is composed of both a local linear increase to a peak likelihood and then a negative exponential decay as distance further increases.
+* `circle_center`: centrographic point prediction by calculation of the center of a circle which bounds the incident coordinate set.
 * `cmd_pred`: centrographic point prediction by calculation of the center of minimum distance between the incident coordinate set.
 * `geom_mean_pred`: centrographic point prediction by calculation of the geometric mean for the incident coordinate set.
 * `harm_mean_pred`: centrographic point prediction by calculation of the harmonic mean for the incident coordinate set.
@@ -64,6 +65,7 @@ The centrographic models in the package analyze the given incident coordinates a
 Centrographic Method       | Equation
 -------------------------- | ---------
 Center of Minimum Distance | $$W(\overline{x},\overline{y}) = \sum_{n=1}^{n} \text{dist}((x_{i}, y_{i}),(\overline{x},\overline{y})) $$
+Center of the Circle       | Given $n$ coordinates, mid-point of the two furthest points.
 Geometric Mean             | $$\overline{x} = e^{\frac{1}{n} \sum_{i=1}^{n} \log{x_{i}}} \\ \overline{y} = e^{\frac{1}{n} \sum_{i=1}^{n} \log{y_{i}}}$$
 Harmonic Mean              | $$\overline{x} = \frac{n}{\sum_{i=1}^{n}\frac{1}{x_{i}}} \\ \overline{y} = \frac{n}{\sum_{i=1}^{n}\frac{1}{y_{i}}}$$
 
@@ -71,7 +73,7 @@ These models are dependent on the assumption that the perpetrator of the inciden
 
 # Discussion and Conclusion
 
-`rgeoprofile` is a package which provides an implementation of serial perpetrator crime analysis into the R programming environment. The package was designed to be user-friendly and robust to accommodate larger input data. The combination of centrographic and decay models provide an analytical platform with wide usage and value for the crime analysis community. The package further serves to increase the capabilities of crime analysis units to utilize these techniques for suspect prioritization or potential intelligence toward the closure of serial incident cases. Additionally, the utilization of the R programming language facilitates both transparency and reproducibility in the analysis of crime incidents which are critical elements for integrity and admissibility in the adjudication of crime incidents. Academically, the package has implications which facilitate research into the performance and comparison of centrographic and decay-based prediction systems, a current debate in the literature [@Bennell:2007; @Rossmo:2005; @Snook:2005]. In summation, the contribution of the `rgeoprofile` package is through flexibile application, transparency, and a no cost start to finish solution for law enforcement/security agencies tasked with perpetrators of serial crimes.
+`rgeoprofile` is a package which provides an implementation of serial perpetrator crime analysis into the R programming environment. The package was designed to be user-friendly and robust to accommodate larger input data. The combination of centrographic and decay models provide an analytical platform with wide usage and value for the crime analysis community. The package further serves to increase the capabilities of crime analysis units to utilize these techniques for suspect prioritization or potential intelligence toward the closure of serial incident cases. Additionally, the utilization of the R programming language facilitates both transparency and reproducibility in the analysis of crime incidents which are critical elements for integrity and admissibility in the adjudication of crime incidents. Academically, the package has implications which facilitate research into the performance and comparison of centrographic and decay-based prediction systems, a current debate in the literature [@Bennell:2007; @Rossmo:2005; @Snook:2005]. Additionally, the [Github repository](https://github.com/JSSpaulding/rgeoprofile) for the package contains supplementary files which aid in usage of the package. The ‘NEWS.md’ file outlines the changes to the package throughout versions. This file is updated each time any change is made to the package to ensure users are apprised of any and all changes. There is also a ‘vignettes‘ folder which contains a markdown document that serves as a guide to the package. The functions are explained in detail with examples to facilitate user comprehension of the functions. The introductory vignette is also integrated into the package; available using: browseVignettes("rgeoprofile"). In summation, the contribution of the `rgeoprofile` package is through flexibile application, transparency, and a no cost start to finish solution for law enforcement/security agencies tasked with perpetrators of serial crimes.
 
 The rgeoprofile package is hosted on an open source [Github repository](https://github.com/JSSpaulding/rgeoprofile) and on the official [Comprehensive R Archive Network (CRAN)](https://cran.r-project.org/package=rgeoprofile) repository.
 
