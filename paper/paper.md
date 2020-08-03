@@ -5,22 +5,18 @@ tags:
 - serial crime
 - geographic profiling
 authors:
-- name: Jamie S. Spaulding
+- name: Jamie S. Spaulding^[Corresponding author]
   orcid: 0000-0002-4232-368X
   affiliation: 1
 - name: Keith B. Morris
-  affiliation: 1
+  affiliation: 2
 affiliations:
-- name: Department of Forensic and Investigative Science, West Virginia University, Morgantown, WV, USA
+- name: Department of Criminal Justice and Forensic Science, Hamline University, Saint Paul, MN, USA
   index: 1
-date: "28 May 2020"
+- name: Department of Forensic and Investigative Science, West Virginia University, Morgantown, WV, USA
+  index: 2
+date: "3 Aug 2020"
 bibliography: rgeoprofile-ref.bib
- 
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
 # Summary
 
