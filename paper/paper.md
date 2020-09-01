@@ -15,7 +15,7 @@ affiliations:
   index: 1
 - name: Department of Forensic and Investigative Science, West Virginia University, Morgantown, WV, USA
   index: 2
-date: "3 Aug 2020"
+date: "1 Sep 2020"
 bibliography: rgeoprofile-ref.bib
 
 # Summary
