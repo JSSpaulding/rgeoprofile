@@ -132,7 +132,7 @@ cgt_profile <- function(lat, lon, buffer = NULL, f = NULL, g = NULL, n = NULL){
       dy <- geosphere::distHaversine(p1 = c(xi, yn),
                                      p2 = c(xi, yi),
                                      r = 3958) #hold y (lat) constant
-      if(dx + dy > 1){phi <- 1} else {phi <- 0}
+      if(dx + dy > buffer){phi <- 1} else {phi <- 0}
       output[jj,i] <- (phi / ((dx + dy) ^ f)) +
         (((1 - phi) * (buffer ^ (g - f))) /
            (((2 * buffer) - (dx - dy)) ^ g)) #Rossmo Formula

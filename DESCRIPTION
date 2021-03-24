@@ -1,9 +1,9 @@
 Package: rgeoprofile
 Type: Package
 Title: Geographic Profiling Methods for Serial Crime Analysis
-Version: 0.2.0
+Version: 0.2.1
 Author: Jamie Spaulding and Keith Morris
-Maintainer: Jamie Spaulding <jspauldi@mix.wvu.edu>
+Maintainer: Jamie Spaulding <jspaulding02@hamline.edu>
 Description: An implementation of functions for the analysis of serial crime 
     incidents. The package implements algorithms for the geographical profiling 
     of serial incidents in attempt to prioritize the area in which the anchor 
@@ -28,7 +28,7 @@ Imports:
     RANN, 
     raster,
     sp,
-    spatstat,
+    spatstat.geom,
     splancs,
     utils
 Suggests: 
