@@ -17,7 +17,6 @@
 #' #Using provided dataset for the Boston Strangler Incidents:
 #' data(desalvo)
 #' cmd_pred(desalvo$lat, desalvo$lon)
-#' @importFrom aspace distances
 #' @importFrom grDevices chull
 #' @importFrom splancs gridpts
 #' @export
@@ -48,7 +47,7 @@ cmd_pred <- function(lat, lon) {
     M.CMD <- matrix(0, nrow = nrow(grid), ncol = 3)
     for(j in 1:nrow(grid)) {
       coord.CMD <- grid[j, ]
-      sumdist.CMD <- sum(aspace::distances(centre.xy = coord.CMD, points))
+      sumdist.CMD <- sum(distances(centre.xy = coord.CMD, points))
       M.CMD[j,1] <- sumdist.CMD
       M.CMD[j,2] <- coord.CMD[1]
       M.CMD[j,3] <- coord.CMD[2]
@@ -84,3 +83,18 @@ cmd_pred <- function(lat, lon) {
   return(data.frame(lat = CMD[,1], lon = CMD[,2]))
 }
 
+#' Multiple Euclidean Distance Calculator
+#' @description Compute distances from a source location to a series of destination
+#'      locations. Adapted from the 'aspace' package.
+#' @param centre.xy Two-element vector containing x,y coordinates of the source location
+#' @param destmat Two-column matrix or data frame containing x,y coordinates of
+#'      the activity locations
+#' @references R Bui, R Buliung, and TK Remmel (2012). \emph{aspace: A collection of
+#'      functions for estimating centrographic statistics and computational geometries
+#'      for spatial point patterns. R package version 3.2}
+#' @noRd
+distances <- function(centre.xy, destmat) {
+  # COMPUTE THE EUCLIDEAN DISTANCE
+  di <- sqrt( (destmat[,1] - centre.xy[1])^2 + (destmat[,2] - centre.xy[2])^2 )
+  return(di)
+}
