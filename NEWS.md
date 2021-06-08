@@ -1,8 +1,12 @@
 # rgeoprofile (Development Version)
 
-* Development version has no changes from 0.2.0.
+* Development version has no changes from 0.2.2.
 
-# rcrimeanalysis 0.2.1
+# rgeoprofile 0.2.2
+
+* Added `distances()` internal function to support the `cmd_pred()` function since the `aspace` package is scheduled for archival.
+
+# rgeoprofile 0.2.1
 
 * Fixed typo `cgt_profile()` function description.
 
@@ -10,7 +14,7 @@
 
 * Updated maintainer contact information/affiliation.
 
-# rcrimeanalysis 0.2.0
+# rgeoprofile 0.2.0
 
 * Added `circle_center()` function to compute a center of the circle centrographic geographic profile prediction.
 
@@ -20,11 +24,11 @@
 
 * Added hex sticker for package.
 
-# rcrimeanalysis 0.1.1
+# rgeoprofile 0.1.1
 
 * Change nearest neighbor calculation from orphaned RANN.L1 package to RANN package
 
-# rcrimeanalysis 0.1.0
+# rgeoprofile 0.1.0
 
 * Initial CRAN Release Version. 
 
