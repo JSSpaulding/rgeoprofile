@@ -18,6 +18,8 @@ Depends: R (>= 3.5.0)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
+URL: https://github.com/JSSpaulding/rgeoprofile
+BugReports: https://github.com/JSSpaulding/rgeoprofile/issues
 RoxygenNote: 7.1.1
 Imports:
     geosphere,
